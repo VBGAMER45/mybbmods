@@ -1,0 +1,19 @@
+Menu Manager
+Author: vbgamer45
+Submitted: 19th June 2010
+Last Updated: 4th August 2010*
+
+* Updated for 1.8.x usage by: Vintagedaddyo on 11/25/2016
+
+
+Adds a menu management system to MyBB. Add/edit/disable menu items.
+
+This is a menu system plugin for MyBB. You can easily add new menu items without editing the templates.
+
+Allows you to add/edit/disable menu items and set their order.
+You can control the following aspects of a menu item.
+Link
+Icon
+Order
+Title
+Enabled or disabled.

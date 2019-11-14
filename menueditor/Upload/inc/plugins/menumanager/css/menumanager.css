@@ -1,0 +1,111 @@
+/*
+ * MyBB: Menu Manager 
+ *
+ * File: menumanager.css
+ * 
+ * Authors: MyBBHacks, vbgamer45, Vintagedaddyo
+ *
+ * MyBB Version: 1.8
+ *
+ * Plugin Version: 1.2
+ * 
+ * http://www.mybbhacks.com
+ * Copyright 2010  MyBBHacks.com
+ *
+ */
+
+
+#header ul.menu {
+	margin: 0 !important;
+	padding: 0 !important;
+	list-style: none !important;
+}
+
+#header ul.menu li {
+	margin: 0 7px !important;
+	display: inline !important;
+}
+
+#header ul.menu li a {
+	padding-left: 2px !important;
+    background-image: url(../images/spacer.png) !important; 
+	background-repeat: no-repeat !important;
+	display: inline-block !important;
+}
+
+#logo img {
+	margin-bottom: 5px !important;
+}
+
+#logo ul.top_links img {
+	padding-right: 2px !important; 
+	margin-bottom: -5px !important;
+}
+
+#logo ul.top_links {
+	font-weight: bold !important;
+	text-align: right !important;
+	margin: -5px 4px -4px 0px !important; 
+	padding-left: 3px !important; 
+}
+
+#logo ul.top_links a.search {
+	background: url('../images/toplinks/search.png') left no-repeat !important; 
+}
+
+#logo ul.top_links a.memberlist {
+	background: url('../images/toplinks/memberlist.png') left no-repeat !important; 
+}
+
+#logo ul.top_links a.calendar {
+	background: url('../images/toplinks/calendar.png') left no-repeat !important;   
+}
+
+#logo ul.top_links a.help {
+	background: url('../images/toplinks/help.png') left no-repeat !important; 
+}
+
+#logo ul.top_links a.portal {
+	background: url('../images/toplinks/portal.png') top left no-repeat !important;  
+}
+
+#panel .upper a.logout {
+	font-weight: bold !important; 
+	padding-right: 20px !important;
+	margin-left: 10px !important;
+	background: url('../images/welcomeblock/logout.png') top right no-repeat !important;  
+}
+
+#panel .upper a.login,
+#panel .upper a.lost_password {
+	padding-left: 20px !important;
+	margin-left: 10px !important;
+	font-weight: bold !important;
+	background: url('../images/welcomeblock/login.png') top left no-repeat !important; 
+}
+
+#panel .upper a.register {
+	padding-right: 20px !important;
+	margin-left: 10px !important;
+	font-weight: bold !important;
+	background: url('../images/welcomeblock/register.png') top right no-repeat !important;  
+}
+
+#panel .lower ul.panel_links {
+	float: left !important;
+}
+
+#panel .lower ul.panel_links a.usercp {
+	background: url('../images/welcomeblock/usercp.png') top left no-repeat !important;  
+    padding-left: 20px !important;
+}
+
+#panel .lower ul.panel_links a.modcp {
+	background: url('../images/welcomeblock/modcp.png') top left no-repeat !important; 
+	padding-left: 20px !important; 
+}	
+
+#panel .lower ul.panel_links a.admincp {
+	background: url('../images/welcomeblock/admincp.png') top left no-repeat !important;  
+	padding-left: 20px !important;
+}
