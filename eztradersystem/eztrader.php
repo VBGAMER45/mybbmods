@@ -467,7 +467,7 @@ function ezTrader_Delete2()
 
 function ezTrader_Report()
 {
-	global $context, $lang;
+	global $context, $lang, $mybb;
 
 
 	@$feedid = (int) $_GET['feedid'];
@@ -501,6 +501,7 @@ echo '
 				</tr>
 			</table>
 			<input type="hidden" name="feedid" value="' . $context['feedid'] . '" />
+			<input type="hidden" name="my_post_key" value="' .  htmlspecialchars_uni($mybb->post_code) . '" />
 			</form>
 		</td>
 	</tr>
@@ -516,6 +517,9 @@ function ezTrader_Report2()
 	global $db, $mybb, $lang;
 
 	@$comment = htmlspecialchars($_REQUEST['comment'],ENT_QUOTES);
+	
+	// Verify incoming POST request
+	verify_post_check($mybb->get_input('my_post_key'));
 
 	if ($comment == '')
 		ezTrader_fatal_error2($lang->eztrader_errnocomment, false);
@@ -732,6 +736,7 @@ echo '
 				</tr>
 			</table>
 			<input type="hidden" name="id" value="' . $context['traderid'] . '" />
+			<input type="hidden" name="my_post_key" value="' .  htmlspecialchars_uni($mybb->post_code) . '" />
 			</form>
 		</td>
 	</tr>
@@ -747,6 +752,9 @@ function ezTrader_Submit2()
 
 	// Check if they are allowed to submit feedback
 	ezTrader_isAllowedTo('feedback');
+	
+	// Verify incoming POST request
+	verify_post_check($mybb->get_input('my_post_key'));
 
 	// Get the trader id
 	$traderid = (int) $_REQUEST['id'];

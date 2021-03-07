@@ -64,5 +64,6 @@ $l['rssfeedposter_no_rssfeedposters'] = 'There are no RSS feeds currently';
 $l['rssfeedposter_description'] = 'Auto creates posts in a forum from an RSS Feed';
 $l['rssfeedposter_addfeed_description'] = 'Adds an RSS Feed to be posted';
 
-
+$l['rssfeedposter_thread_prefix'] = 'MyBB Threadfix';
+$l['rssfeedposter_icon'] = 'Icon';
 ?>

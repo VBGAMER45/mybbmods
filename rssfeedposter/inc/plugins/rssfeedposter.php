@@ -3,7 +3,7 @@
 RSS Feed Poster
 by: vbgamer45
 http://www.mybbhacks.com
-Copyright 2010-2019  MyBBHacks.com
+Copyright 2010-2020  MyBBHacks.com
 
 ############################################
 License Information:
@@ -30,7 +30,7 @@ function rssfeedposter_info()
 		"website"		=> "https://www.mybbhacks.com",
 		"author"		=> "vbgamer45",
 		"authorsite"		=> "https://www.mybbhacks.com",
-		"version"		=> "6.1",
+		"version"		=> "7.0",
 		"guid" 			=> "75763b9f3263e2646d7ebdfee6d4c895",
 		"compatibility"	=> "18*"
 		);
@@ -60,11 +60,15 @@ topicprefix tinytext,
 numbertoimport smallint(5) NOT NULL default 1,
 importevery smallint(5) NOT NULL default 180,
 updatetime int(10) unsigned NOT NULL default '0',
+threadprefix int(10) unsigned NOT NULL default '0',
+threadicon int(10) unsigned NOT NULL default '0',
 PRIMARY KEY  (ID_FEED))");
 
 
 	$dbresult = $db->query("SHOW COLUMNS FROM ".TABLE_PREFIX."feedbot");
 	$usefeeddate =  1;
+	$threadprefix = 1;
+	$threadicon = 1;
 
 
 	while ($row = $db->fetch_array($dbresult))
@@ -72,6 +76,11 @@ PRIMARY KEY  (ID_FEED))");
 
 		if($row['Field'] == 'usefeeddate')
 			$usefeeddate = 0;
+		if($row['Field'] == 'threadprefix')
+			$threadprefix = 0;
+        if($row['Field'] == 'threadicon')
+			$threadicon = 0;
+
 
 
     }
@@ -79,6 +88,17 @@ PRIMARY KEY  (ID_FEED))");
 
 	if($usefeeddate)
 		$db->query("ALTER TABLE ".TABLE_PREFIX."feedbot ADD column usefeeddate tinyint(4) NOT NULL default '0'");
+
+
+
+	if($threadicon)
+		$db->query("ALTER TABLE ".TABLE_PREFIX."feedbot ADD column threadicon int(10) unsigned NOT NULL default '0'");
+
+
+	if($threadprefix)
+		$db->query("ALTER TABLE ".TABLE_PREFIX."feedbot ADD column threadprefix int(10) unsigned NOT NULL default '0'");
+
+
 
 
 
@@ -133,6 +153,42 @@ function rssfeedposter_activate()
   global $db, $lang;
 
   rssfeedposter_loadlanguage();
+
+	$dbresult = $db->query("SHOW COLUMNS FROM ".TABLE_PREFIX."feedbot");
+	$usefeeddate =  1;
+	$threadprefix = 1;
+	$threadicon = 1;
+
+
+	while ($row = $db->fetch_array($dbresult))
+	{
+
+		if($row['Field'] == 'usefeeddate')
+			$usefeeddate = 0;
+		if($row['Field'] == 'threadprefix')
+			$threadprefix = 0;
+        if($row['Field'] == 'threadicon')
+			$threadicon = 0;
+
+
+
+    }
+	$db->free_result($dbresult);
+
+	if($usefeeddate)
+		$db->query("ALTER TABLE ".TABLE_PREFIX."feedbot ADD column usefeeddate tinyint(4) NOT NULL default '0'");
+
+
+
+	if($threadicon)
+		$db->query("ALTER TABLE ".TABLE_PREFIX."feedbot ADD column threadicon int(10) unsigned NOT NULL default '0'");
+
+
+	if($threadprefix)
+		$db->query("ALTER TABLE ".TABLE_PREFIX."feedbot ADD column threadprefix int(10) unsigned NOT NULL default '0'");
+
+
+
 
   // Install the Task
   	$query = $db->query("
@@ -370,6 +426,9 @@ function rssfeedposter_admin()
 			$feedposter_markread = isset($_REQUEST['feedposter_markread']) ? 1 : 0;
 			$usefeeddate = isset($_REQUEST['usefeeddate']) ? 1 :0;
 
+			$threadprefix = (int) $_REQUEST['threadprefix'];
+			$threadicon = (int) $_REQUEST['icon'];
+
 			//Lookup the User ID of the postername
 			$memid = 0;
 
@@ -407,11 +466,13 @@ function rssfeedposter_admin()
 
 				$db->write_query("INSERT IGNORE INTO ".TABLE_PREFIX."feedbot
 				(fid, feedurl, title, enabled, html, postername, uid, locked,
-			articlelink, topicprefix, numbertoimport, importevery, updatetime,markasread,usefeeddate)
+			articlelink, topicprefix, numbertoimport, importevery, updatetime,markasread,usefeeddate,
+			threadprefix,threadicon)
 		VALUES
 			($boardselect,'$feedposter_feedurl','$feedposter_feedtitle',$feedposter_feedenabled,
 		 	$feedposter_htmlenabled, '$feedposter_postername', $memid, $feedposter_topiclocked,1,
-		 	'$feedposter_topicprefix',$feedposter_numbertoimport,$feedposter_importevery,$updatetime,$feedposter_markread,$usefeeddate)");
+		 	'$feedposter_topicprefix',$feedposter_numbertoimport,$feedposter_importevery,$updatetime,$feedposter_markread,$usefeeddate,
+		 	'$threadprefix','$threadicon')");
 
 
 				admin_redirect("index.php?module=config/rssfeedposter");
@@ -424,6 +485,11 @@ function rssfeedposter_admin()
 		$page->output_header($lang->rssfeedposter_addfeed);
 		$page->add_breadcrumb_item($lang->rssfeedposter_addfeedtopic);
 		$page->output_nav_tabs($tabs, 'rssfeedposter_addfeed');
+
+
+
+
+
 
 
 
@@ -446,6 +512,13 @@ function rssfeedposter_admin()
 		$table->construct_cell($forumBox);
 		$table->construct_row();
 
+        $posticons = get_post_icons();
+		$table->construct_cell($lang->rssfeedposter_icon);
+		$table->construct_cell('<table><tr>' . $posticons . '</tr></table>');
+		$table->construct_row();
+
+
+
 		$table->construct_cell($lang->rssfeedposter_postername);
 		$table->construct_cell('<input type="text" size="50" name="feedposter_postername" value="' . $feedposter_postername. '" />');
 		$table->construct_row();
@@ -453,6 +526,13 @@ function rssfeedposter_admin()
 		$table->construct_cell($lang->rssfeedposter_topicprefix);
 		$table->construct_cell('<input type="text" size="50" name="feedposter_topicprefix" value="' . $feedposter_topicprefix. '" />');
 		$table->construct_row();
+
+
+        $prefixselect = build_prefix_select('all', $mybb->get_input('threadprefix', 1));
+		$table->construct_cell($lang->rssfeedposter_thread_prefix);
+		$table->construct_cell($prefixselect);
+		$table->construct_row();
+
 
 
 		$table->construct_cell($lang->rssfeedposter_importevery);
@@ -506,7 +586,8 @@ function rssfeedposter_admin()
 		$query = $db->query("
 			SELECT
 				ID_FEED, fid, feedurl, title, postername, enabled, html, uid, locked,
-				articlelink, topicprefix, numbertoimport, importevery, markasread, usefeeddate 
+				articlelink, topicprefix, numbertoimport, importevery, markasread, usefeeddate,
+				 threadprefix, threadicon 
 			FROM ".TABLE_PREFIX."feedbot
 
 			WHERE id_feed = $id LIMIT 1
@@ -528,6 +609,10 @@ function rssfeedposter_admin()
 		$feedposter_markread = $feedRow['markasread'];
 
 		$usefeeddate = $feedRow['usefeeddate'];
+
+		$mybb->input['icon'] = $feedRow['threadicon'];
+
+		$feedposter_threadprefix = $feedRow['threadprefix'];
 
 
 		if ($mybb->input['action'] == 'edit2')
@@ -561,6 +646,11 @@ function rssfeedposter_admin()
 
 			$feedposter_markread = isset($_REQUEST['feedposter_markread']) ? 1 : 0;
 			$usefeeddate = isset($_REQUEST['usefeeddate']) ? 1 : 0;
+
+			$threadprefix = (int) $_REQUEST['threadprefix'];
+			$threadicon = (int) $_REQUEST['icon'];
+
+
 
 			//Lookup the User ID of the postername
 			$memid = 0;
@@ -599,7 +689,8 @@ function rssfeedposter_admin()
 			fid = $boardselect, feedurl = '$feedposter_feedurl', title = '$feedposter_feedtitle', enabled = $feedposter_feedenabled,
 		  	html = $feedposter_htmlenabled, postername = '$feedposter_postername', uid = $memid,
 		  	locked = $feedposter_topiclocked,articlelink = 1, topicprefix = '$feedposter_topicprefix',
-		 	numbertoimport = $feedposter_numbertoimport, importevery = $feedposter_importevery, markasread = $feedposter_markread, usefeeddate = '$usefeeddate' 
+		 	numbertoimport = $feedposter_numbertoimport, importevery = $feedposter_importevery, markasread = $feedposter_markread, usefeeddate = '$usefeeddate',
+		 	 threadprefix = '$threadprefix', threadicon = '$threadicon' 
 	    WHERE ID_FEED = $id LIMIT 1"
 
 				);
@@ -636,6 +727,10 @@ function rssfeedposter_admin()
 		$table->construct_cell($forumBox);
 		$table->construct_row();
 
+        $posticons = get_post_icons();
+		$table->construct_cell($lang->rssfeedposter_icon);
+		$table->construct_cell('<table><tr>' . $posticons . '</tr></table>');
+		$table->construct_row();
 
 		$table->construct_cell($lang->rssfeedposter_postername);
 		$table->construct_cell('<input type="text" size="50" name="feedposter_postername" value="' . $feedposter_postername. '" />');
@@ -644,6 +739,13 @@ function rssfeedposter_admin()
 		$table->construct_cell($lang->rssfeedposter_topicprefix);
 		$table->construct_cell('<input type="text" size="50" name="feedposter_topicprefix" value="' . $feedposter_topicprefix. '" />');
 		$table->construct_row();
+
+
+        $prefixselect = build_prefix_select('all', $feedposter_threadprefix);
+		$table->construct_cell($lang->rssfeedposter_thread_prefix);
+		$table->construct_cell($prefixselect);
+		$table->construct_row();
+
 
 
 		$table->construct_cell($lang->rssfeedposter_importevery);

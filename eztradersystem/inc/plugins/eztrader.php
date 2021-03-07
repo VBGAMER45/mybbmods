@@ -3,7 +3,7 @@
 eztrader
 by: vbgamer45
 http://www.mybbhacks.com
-Copyright 2011-2015  MyBBHacks.com
+Copyright 2011-2020  MyBBHacks.com
 
 ############################################
 License Information:
@@ -31,10 +31,10 @@ function eztrader_info()
 	return array(
 		"name"		=> "ezTrader",
 		"description"		=> "Trader Rating System for MyBB",
-		"website"		=> "http://www.mybbhacks.com",
+		"website"		=> "https://www.mybbhacks.com",
 		"author"		=> "vbgamer45",
-		"authorsite"		=> "http://www.mybbhacks.com",
-		"version"		=> "1.0.2",
+		"authorsite"		=> "https://www.mybbhacks.com",
+		"version"		=> "1.5",
 		"compatibility"	=> "18*",
 		"guid" => "76ae0d95bfd978369edf8cf65c6afa96",
 		);

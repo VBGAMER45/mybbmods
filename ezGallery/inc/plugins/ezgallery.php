@@ -3,7 +3,7 @@
 ezGallery Lite
 by: vbgamer45
 http://www.mybbhacks.com
-Copyright 2011-2017  MyBBHacks.com
+Copyright 2011-2020  MyBBHacks.com
 
 ############################################
 License Information:
@@ -31,7 +31,7 @@ function ezgallery_info()
 		"website"		=> "http://www.mybbhacks.com",
 		"author"		=> "vbgamer45",
 		"authorsite"		=> "http://www.mybbhacks.com",
-		"version"		=> "2.1.2",
+		"version"		=> "2.2",
 		"compatibility"	=> "18*",
 		"guid" => "69b0adb3cd714eb1b03246937927c235",
 		);
@@ -472,7 +472,7 @@ echo 'Do you like ezGallery but want more features? Check out <a href="http://ww
     <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 	<input type="hidden" name="cmd" value="_xclick">
 	<input type="hidden" name="business" value="sales@visualbasiczone.com">
-	<input type="hidden" name="item_name" value="SMF Gallery">
+	<input type="hidden" name="item_name" value="MyBB ezGallery">
 	<input type="hidden" name="no_shipping" value="1">
 	<input type="hidden" name="no_note" value="1">
 	<input type="hidden" name="currency_code" value="USD">
@@ -774,9 +774,7 @@ function CatDown()
 		SET roworder = $o WHERE ID_CAT = $cat");
 
 
-
-
-	//Redirect to index to view cats
+	// Redirect to index to view cats
 	admin_redirect('index.php?module=config/ezgallery&action=admincat');
 }
 

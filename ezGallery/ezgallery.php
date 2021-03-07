@@ -3,7 +3,7 @@
 ezGallery Lite
 by: vbgamer45
 http://www.mybbhacks.com
-Copyright 2011-2016  MyBBHacks.com
+Copyright 2011-2020  MyBBHacks.com
 
 ############################################
 License Information:
@@ -129,7 +129,7 @@ function mainview()
 			$start = 0;
 			$page = 1;
 		}
-		$pagingList = multipage($totalPicCount['total'], $perpage, $page, "ezgallery.php?cat=$cat");
+		$pagingList = multipage($totalPicCount['total'], $perpage, $page, $mybb->settings['bburl'] . "/ezgallery.php?cat=$cat");
 				
 				
 		// Image Listing
@@ -185,9 +185,9 @@ function mainview()
 						continue;
 
 					if (!empty($row['namestyle']))
-						$link = '<a href="member.php?action=profile&uid=' . $row['uid'] . '">' . str_replace("{username}",$row['username'],$row['namestyle']) . '</a>';
+						$link = '<a href="' . $mybb->settings['bburl'] . '/member.php?action=profile&uid=' . $row['uid'] . '">' . str_replace("{username}",$row['username'],$row['namestyle']) . '</a>';
 					else
-						$link = '<a href="member.php?action=profile&uid=' . $row['uid'] . '">' . $row['username'] . '</a>';
+						$link = '<a href="' . $mybb->settings['bburl'] . '/member.php?action=profile&uid=' . $row['uid'] . '">' . $row['username'] . '</a>';
 
 					
 					// Add them both to the list and to the more detailed list.
@@ -292,15 +292,15 @@ function mainview()
 			if ($rowlevel == 0)
 				echo '<tr class="' . $styleclass . '">';
 
-			echo '<td align="center"><a href="ezgallery.php?action=view&id=' . $row['ID_PICTURE'] . '">
+			echo '<td align="center"><a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=view&id=' . $row['ID_PICTURE'] . '">
 			<img ' . ($GD_Installed == true ?  'src="' . $gallerySettings['gallery_url'] . $row['thumbfilename'] . '" ' : 'src="' . $gallerySettings['gallery_url'] . $row['filename'] . '" ')  . ' border="0" alt="" /></a><br />';
 			echo '<span class="smalltext">' . $lang->gallery_text_views . $row['views'] . '<br />';
 			echo $lang->gallery_text_filesize . gallery_format_size($row['filesize'], 2) . '<br />';
 			echo $lang->gallery_text_date . my_date($mybb->settings['dateformat'], $row['date']) . '<br />';
-			echo $lang->gallery_text_comments. ' (<a href="ezgallery.php?action=view&id=' . $row['ID_PICTURE'] . '">' . $row['commenttotal'] . '</a>)<br />';
+			echo $lang->gallery_text_comments. ' (<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=view&id=' . $row['ID_PICTURE'] . '">' . $row['commenttotal'] . '</a>)<br />';
 			
 			if ($row['username'] != '')
-				echo $lang->gallery_text_by . ' <a href="member.php?action=profile&uid=' . $row['ID_MEMBER'] . '">'  . $row['username'] . '</a><br />';
+				echo $lang->gallery_text_by . ' <a href="' . $mybb->settings['bburl'] . '/member.php?action=profile&uid=' . $row['ID_MEMBER'] . '">'  . $row['username'] . '</a><br />';
 			else 
 				echo $lang->gallery_text_by, $lang->gallery_guest,  '<br />';
 
@@ -308,9 +308,9 @@ function mainview()
 			if ($g_manage)
 				echo '&nbsp;<a href="' . $mybb->settings['bburl'] . '/' . $config['admin_dir'] . '/index.php?module=config/ezgallery&action=unapprove&id=' . $row['ID_PICTURE'] . '">' . $lang->gallery_text_unapprove . '</a>';
 			if ($g_manage || $g_edit_own && $row['ID_MEMBER'] == $mybb->user['uid'])
-				echo '&nbsp;<a href="ezgallery.php?action=edit&id=' . $row['ID_PICTURE'] . '">' . $lang->gallery_text_edit . '</a>';
+				echo '&nbsp;<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=edit&id=' . $row['ID_PICTURE'] . '">' . $lang->gallery_text_edit . '</a>';
 			if ($g_manage || $g_delete_own && $row['ID_MEMBER'] == $mybb->user['uid'])
-				echo '&nbsp;<a href="ezgallery.php?action=delete&id=' . $row['ID_PICTURE'] . '">' . $lang->gallery_text_delete . '</a>';
+				echo '&nbsp;<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=delete&id=' . $row['ID_PICTURE'] . '">' . $lang->gallery_text_delete . '</a>';
 
 			echo '</span></td>';
 
@@ -362,10 +362,10 @@ function mainview()
 		echo '
 				<tr class="tcat"><td align="center" colspan="' . $maxrowlevel . '">';
 				if($g_add)
-				echo '<a href="ezgallery.php?action=add&cat=' . $cat . '">' . $lang->gallery_text_addpicture .'</a><br />';
+				echo '<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=add&cat=' . $cat . '">' . $lang->gallery_text_addpicture .'</a><br />';
 
 				echo '
-				<a href="ezgallery.php">' . $lang->gallery_text_returngallery . '</a></td>
+				<a href="' . $mybb->settings['bburl'] . '/ezgallery.php">' . $lang->gallery_text_returngallery . '</a></td>
 			</tr>';
 
 
@@ -444,7 +444,7 @@ function mainview()
 					</table>
 				<br />';
 
-		// List all the catagories
+		// List all the categories
 	
 		echo '<table cellspacing="0" cellpadding="10" border="0" align="center" width="90%" class="tborder">
 				<tr class="tcat">
@@ -469,11 +469,11 @@ function mainview()
 			echo '<tr class="trow2">';
 		
 			if ($row['image'] == '')
-				echo '<td colspan="2"><a href="ezgallery.php?cat=' . $row['ID_CAT'] . '">' . $parser->parse_message($row['title'], $parser_options) . '</a></td><td>' . $parser->parse_message($row['description'], $parser_options) . '</td>';
+				echo '<td colspan="2"><a href="' . $mybb->settings['bburl'] . '/ezgallery.php?cat=' . $row['ID_CAT'] . '">' . $parser->parse_message($row['title'], $parser_options) . '</a></td><td>' . $parser->parse_message($row['description'], $parser_options) . '</td>';
 			else
 			{
-				echo '<td><a href="ezgallery.php?cat=' . $row['ID_CAT'] . '"><img src="' . $row['image'] . '" border="0" alt="" /></a></td>';
-				echo '<td><a href="ezgallery.php?cat=' . $row['ID_CAT'] . '">' . $parser->parse_message($row['title'], $parser_options) . '</a></td><td>' . $parser->parse_message($row['description'], $parser_options) . '</td>';
+				echo '<td><a href="' . $mybb->settings['bburl'] . '/ezgallery.php?cat=' . $row['ID_CAT'] . '"><img src="' . $row['image'] . '" border="0" alt="" /></a></td>';
+				echo '<td><a href="' . $mybb->settings['bburl'] . '/ezgallery.php?cat=' . $row['ID_CAT'] . '">' . $parser->parse_message($row['title'], $parser_options) . '</a></td><td>' . $parser->parse_message($row['description'], $parser_options) . '</td>';
 			}
 
 			// Show total pictures in the category
@@ -568,7 +568,7 @@ function AddPicture()
 	// Get the category
 	@$cat = intval($_REQUEST['cat']);
 
-	echo '<form method="post" enctype="multipart/form-data" name="picform" id="picform" action="ezgallery.php?action=add2">
+	echo '<form method="post" enctype="multipart/form-data" name="picform" id="picform" action="' . $mybb->settings['bburl'] . '/ezgallery.php?action=add2">
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
   <tr class="tcat">
     <td width="50%" colspan="2" align="center">
@@ -664,8 +664,6 @@ function AddPicture2()
 	$keywords = htmlspecialchars_uni($db->escape_string($_REQUEST['keywords']));
 	$cat = intval($_REQUEST['cat']);
 	
-	
-	
 	@$allowcomments = $_REQUEST['allowcomments'];
 
 	// Check if pictures are auto approved
@@ -707,7 +705,7 @@ function AddPicture2()
 		
 			$_FILES['picture']['tmp_name'] = $gallerySettings['gallery_path'] . '/img.tmp';
 			$sizes = getimagesize($_FILES['picture']['tmp_name']);
-			$failed =true;
+			$failed = true;
 		}
 
 			// No size, then it's probably not a valid pic.
@@ -872,7 +870,7 @@ function EditPicture()
 	
 
 
-	echo '<form method="post" enctype="multipart/form-data" name="picform" id="picform" action="ezgallery.php?action=edit2" accept-charset="', $context['character_set'], '">
+	echo '<form method="post" enctype="multipart/form-data" name="picform" id="picform" action="' . $mybb->settings['bburl'] . '/ezgallery.php?action=edit2" accept-charset="', $context['character_set'], '">
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
   <tr class="tcat">
     <td width="50%" colspan="2"  align="center">
@@ -938,7 +936,7 @@ echo '
   		echo $lang->gallery_form_notapproved;
 
 echo '<div align="center"><br /><b>' . $lang->gallery_text_oldpicture . '</b><br />
-<a href="ezgallery.php?action=view&id=' . $context['gallery_pic']['ID_PICTURE'] . '" target="blank"><img src="' . $gallerySettings['gallery_url'] . $context['gallery_pic']['thumbfilename']  . '" border="0" alt="" /></a><br />
+<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=view&id=' . $context['gallery_pic']['ID_PICTURE'] . '" target="blank"><img src="' . $gallerySettings['gallery_url'] . $context['gallery_pic']['thumbfilename']  . '" border="0" alt="" /></a><br />
 			<span class="smalltext">' . $lang->gallery_text_views . $context['gallery_pic']['views'] . '<br />
 			' . $lang->gallery_text_filesize  . gallery_format_size($context['gallery_pic']['filesize'],2) . '<br />
 			' . $lang->gallery_text_date . $context['gallery_pic']['date'] . '<br />
@@ -1043,6 +1041,7 @@ function EditPicture2()
 					fatal_error2($lang->gallery_error_invalid_picture,false);
 				elseif ((!empty($gallerySettings['gallery_max_width']) && $sizes[0] > $gallerySettings['gallery_max_width']) || (!empty($gallerySettings['gallery_max_height']) && $sizes[1] > $gallerySettings['gallery_max_height']))
 				{
+				    @unlink($_FILES['picture']['tmp_name']);
 					fatal_error2($lang->gallery_error_img_size_height . $sizes[1] . $lang->gallery_error_img_size_width. $sizes[0],false);
 				}
 				else
@@ -1195,7 +1194,7 @@ function DeletePicture()
 				<br />';
 	
 	echo '
-	<form method="post" action="ezgallery.php?action=delete2">
+	<form method="post" action="' . $mybb->settings['bburl'] . '/ezgallery.php?action=delete2">
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
   <tr class="tcat">
     <td width="50%" colspan="2" align="center">
@@ -1206,11 +1205,11 @@ function DeletePicture()
 	' . $lang->gallery_warn_deletepicture . '
 	<br />
 <div align="center"><br /><b>' . $lang->gallery_form_delpicture . '</b><br />
-<a href="ezgallery.php?action=view&id=' . $context['gallery_pic']['ID_PICTURE'] . '" target="blank"><img src="' . $gallerySettings['gallery_url'] . $context['gallery_pic']['thumbfilename']  . '" border="0" alt="" /></a><br />
+<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=view&id=' . $context['gallery_pic']['ID_PICTURE'] . '" target="blank"><img src="' . $gallerySettings['gallery_url'] . $context['gallery_pic']['thumbfilename']  . '" border="0" alt="" /></a><br />
 			<span class="smalltext">' . $lang->gallery_text_views . $context['gallery_pic']['views'] . '<br />
 			' . $lang->gallery_text_filesize  . gallery_format_size($context['gallery_pic']['filesize'],2) . '<br />
 			' . $lang->gallery_text_date . $context['gallery_pic']['date'] . '<br />
-			' . $lang->gallery_text_comments . ' (<a href="ezgallery.php?action=view&id=' .  $context['gallery_pic']['ID_PICTURE'] . '" target="blank">' .  $context['gallery_pic']['commenttotal'] . '</a>)<br />
+			' . $lang->gallery_text_comments . ' (<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=view&id=' .  $context['gallery_pic']['ID_PICTURE'] . '" target="blank">' .  $context['gallery_pic']['commenttotal'] . '</a>)<br />
 	</div><br />
 	<input type="hidden" name="id" value="' . $context['gallery_pic']['ID_PICTURE'] . '" />
     <input type="hidden" name="my_post_key" value="' . $mybb->post_code . '" />
@@ -1265,9 +1264,12 @@ function DeletePicture2()
 	if (AllowedTo('manage') || (AllowedTo('delete') && $mybb->user['uid']== $memID))
 	{
 		//Delete Large image
-		@unlink($gallerySettings['gallery_path'] . $row['filename']);
+        if (!empty($row['filename']))
+		    @unlink($gallerySettings['gallery_path'] . $row['filename']);
+
 		//Delete Thumbnail
-		@unlink($gallerySettings['gallery_path'] . $row['thumbfilename']);
+        if (!empty($row['thumbfilename']))
+		    @unlink($gallerySettings['gallery_path'] . $row['thumbfilename']);
 
 		// Delete all the picture related db entries
 
@@ -1311,7 +1313,7 @@ function ReportPicture()
 	gallery_header();
 	
 		echo '
-<form method="post" name="cprofile" id="cprofile" action="ezgallery.php?action=report2">
+<form method="post" name="cprofile" id="cprofile" action="' . $mybb->settings['bburl'] . '/ezgallery.php?action=report2">
 <table border="0" cellpadding="0" cellspacing="0" bordercolor="#FFFFFF" width="100%">
   <tr>
     <td width="50%" colspan="2" align="center" class="tcat">
@@ -1412,7 +1414,7 @@ function AddComment()
 	
 	
 	echo '
-<form method="post" name="cprofile" id="cprofile" action="ezgallery.php?action=comment2">
+<form method="post" name="cprofile" id="cprofile" action="' . $mybb->settings['bburl'] . '/ezgallery.php?action=comment2">
 <table border="0" cellpadding="0" cellspacing="0" bordercolor="#FFFFFF" width="100%">
   <tr>
     <td width="50%" colspan="2" align="center" class="tcat">
@@ -1545,7 +1547,7 @@ function MyImages()
 			$start = 0;
 			$page = 1;
 		}
-	$pagingList = multipage($totalPicCount['total'], $perpage, $page, "ezgallery.php?action=myimages&u=$u");
+	$pagingList = multipage($totalPicCount['total'], $perpage, $page, $mybb->settings['bburl'] . "/ezgallery.php?action=myimages&u=$u");
 				
 
 	
@@ -1611,7 +1613,7 @@ function MyImages()
 			if($rowlevel == 0)
 				echo '<tr class="' . $styleclass . '">';
 
-			echo '<td align="center"><a href="ezgallery.php?action=view&id=' . $row['ID_PICTURE'] . '">
+			echo '<td align="center"><a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=view&id=' . $row['ID_PICTURE'] . '">
 			<img ' . ($GD_Installed == true ?  'src="' . $gallerySettings['gallery_url'] . $row['thumbfilename'] . '" ' : 'src="' . $gallerySettings['gallery_url'] . $row['filename'] . '" height="78" width="120" ')  . ' border="0" alt="" /></a><br />';
 			if($mybb->user['uid']== $userid)
 			{
@@ -1624,14 +1626,14 @@ function MyImages()
 			echo '<span class="smalltext">' . $lang->gallery_text_views . $row['views'] . '<br />';
 			echo $lang->gallery_text_filesize . gallery_format_size($row['filesize'], 2) . '<br />';
 			echo $lang->gallery_text_date . my_date($mybb->settings['dateformat'], $row['date']) . '<br />';
-			echo $lang->gallery_text_comments . ' (<a href="ezgallery.php?action=view&id=' . $row['ID_PICTURE'] . '">' . $row['commenttotal'] . '</a>)<br />';
-			echo $lang->gallery_text_by . ' <a href="member.php?action=profile&uid=' . $row['ID_MEMBER'] . '">'  . $row['username'] . '</a><br />';
+			echo $lang->gallery_text_comments . ' (<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=view&id=' . $row['ID_PICTURE'] . '">' . $row['commenttotal'] . '</a>)<br />';
+			echo $lang->gallery_text_by . ' <a href="' . $mybb->settings['bburl'] . '/member.php?action=profile&uid=' . $row['ID_MEMBER'] . '">'  . $row['username'] . '</a><br />';
 			if($g_manage)
 				echo '&nbsp;<a href="' . $mybb->settings['bburl'] . '/' . $config['admin_dir'] . '/index.php?module=config/ezgallery&action=unapprove&id=' . $row['ID_PICTURE'] . '">' . $lang->gallery_text_unapprove . '</a>';
 			if($g_manage || $g_edit_own && $row['ID_MEMBER'] == $mybb->user['uid'])
-				echo '&nbsp;<a href="ezgallery.php?action=edit&id=' . $row['ID_PICTURE'] . '">' . $lang->gallery_text_edit . '</a>';
+				echo '&nbsp;<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=edit&id=' . $row['ID_PICTURE'] . '">' . $lang->gallery_text_edit . '</a>';
 			if($g_manage || $g_delete_own && $row['ID_MEMBER'] == $mybb->user['uid'])
-				echo '&nbsp;<a href="ezgallery.php?action=delete&id=' . $row['ID_PICTURE'] . '">' . $lang->gallery_text_delete . '</a>';
+				echo '&nbsp;<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=delete&id=' . $row['ID_PICTURE'] . '">' . $lang->gallery_text_delete . '</a>';
 
 			echo '</span></td>';
 
@@ -1667,10 +1669,10 @@ function MyImages()
 		echo '
 				<tr class="tcat"><td align="center" colspan="' . $maxrowlevel . '">';
 				if ($g_add)
-				echo '<a href="ezgallery.php?action=add">' . $lang->gallery_text_addpicture . '</a><br />';
+				echo '<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=add">' . $lang->gallery_text_addpicture . '</a><br />';
 
 				echo '
-				<a href="ezgallery.php">' . $lang->gallery_text_returngallery . '</a></td>
+				<a href="' . $mybb->settings['bburl'] . '/ezgallery.php">' . $lang->gallery_text_returngallery . '</a></td>
 			</tr>';
 
 
@@ -1684,7 +1686,7 @@ function MyImages()
 
 function GalleryCopyright()
 {
-	echo '<div align="center">Powered by: <a href="http://www.mybbhacks.com" target="blank">ezGallery Lite</a> by <a href="http://www.createaforum.com" title="Forum Hosting">CreateAForum.com</a></div>';
+	echo '<div align="center">Powered by: <a href="https://www.mybbhacks.com" target="blank">ezGallery Lite</a> by <a href="https://www.createaforum.com" title="Forum Hosting">CreateAForum.com</a></div>';
 }
 
 function Search()
@@ -1748,7 +1750,7 @@ function Search()
 	
 
 	echo '
-<form method="post" action="ezgallery.php?action=search2">
+<form method="post" action="' . $mybb->settings['bburl'] . '/ezgallery.php?action=search2">
 <table border="0" cellpadding="0" cellspacing="0" bordercolor="#FFFFFF" width="50%"  class="tborder" align="center">
   <tr>
     <td width="100%" colspan="2" align="center" class="tcat">
@@ -1953,22 +1955,22 @@ function Search2()
 			if ($rowlevel == 0)
 				echo '<tr class="' . $styleclass . '">';
 
-			echo '<td align="center"><a href="ezgallery.php?action=view&id=' . $row['ID_PICTURE'] . '">
+			echo '<td align="center"><a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=view&id=' . $row['ID_PICTURE'] . '">
 			<img ' . ($GD_Installed == true ?  'src="' . $gallerySettings['gallery_url'] . $row['thumbfilename'] . '" ' : 'src="' . $gallerySettings['gallery_url'] . $row['filename'] . '" height="78" width="120" ')  . ' border="0" alt="" /></a><br />';
 			echo '<span class="smalltext">' . $lang->gallery_text_views . $row['views'] . '<br />';
 			echo $lang->gallery_text_filesize . gallery_format_size($row['filesize'], 2) . '<br />';
 			echo $lang->gallery_text_date . my_date($mybb->settings['dateformat'], $row['date']) . '<br />';
-			echo $lang->gallery_text_comments . ' (<a href="ezgallery.php?action=view&id=' . $row['ID_PICTURE'] . '">' . $row['commenttotal'] . '</a>)<br />';
+			echo $lang->gallery_text_comments . ' (<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=view&id=' . $row['ID_PICTURE'] . '">' . $row['commenttotal'] . '</a>)<br />';
 			if ($row['username'] != '')
-				echo $lang->gallery_text_by . ' <a href="member.php?action=profile&uid=' . $row['ID_MEMBER'] . '">'  . $row['username'] . '</a><br />';
+				echo $lang->gallery_text_by . ' <a href="' . $mybb->settings['bburl'] . '/member.php?action=profile&uid=' . $row['ID_MEMBER'] . '">'  . $row['username'] . '</a><br />';
 			else 
 				echo $lang->gallery_text_by . $lang->gallery_guest . '<br />';
 			if ($g_manage)
 				echo '&nbsp;<a href="' . $mybb->settings['bburl'] . '/' . $config['admin_dir'] . '/index.php?module=config/ezgallery&action=unapprove&id=' . $row['ID_PICTURE'] . '">' . $lang->gallery_text_unapprove . '</a>';
 			if ($g_manage || $g_edit_own && $row['ID_MEMBER'] == $mybb->user['uid'])
-				echo '&nbsp;<a href="ezgallery.php?action=edit&id=' . $row['ID_PICTURE'] . '">' . $lang->gallery_text_edit . '</a>';
+				echo '&nbsp;<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=edit&id=' . $row['ID_PICTURE'] . '">' . $lang->gallery_text_edit . '</a>';
 			if ($g_manage || $g_delete_own && $row['ID_MEMBER'] == $mybb->user['uid'])
-				echo '&nbsp;<a href="ezgallery.php?action=delete&id=' . $row['ID_PICTURE'] . '">' . $lang->gallery_text_delete . '</a>';
+				echo '&nbsp;<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=delete&id=' . $row['ID_PICTURE'] . '">' . $lang->gallery_text_delete . '</a>';
 
 			echo '</span></td>';
 
@@ -2000,10 +2002,10 @@ function Search2()
 		echo '
 				<tr class="tcat"><td align="center" colspan="' . $maxrowlevel . '">';
 				if ($g_add)
-				echo '<a href="ezgallery.php?action=add">' . $lang->gallery_text_addpicture . '</a><br />';
+				echo '<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=add">' . $lang->gallery_text_addpicture . '</a><br />';
 
 				echo '
-				<a href="ezgallery.php">' . $lang->gallery_text_returngallery . '</a></td>
+				<a href="' . $mybb->settings['bburl'] . '/ezgallery.php">' . $lang->gallery_text_returngallery . '</a></td>
 			</tr>';
 
 		echo '</table>';
@@ -2127,13 +2129,12 @@ function ViewPicture()
 		'date' => my_date($mybb->settings['dateformat'], $row['date']),
 		'keywords' => $row['keywords'],
 		'username' => $row['username'],
-		'username' => $row['username'],
 	);
 
 
 
 	// Update the number of views.
-	  $dbresult = $db->query("UPDATE ".TABLE_PREFIX."gallery_pic
+	 $db->query("UPDATE ".TABLE_PREFIX."gallery_pic
 		SET views = views + 1 WHERE ID_PICTURE = $id LIMIT 1");
 
 
@@ -2164,9 +2165,9 @@ function ViewPicture()
 						continue;
 
 					if (!empty($row['namestyle']))
-						$link = '<a href="member.php?action=profile&uid=' . $row['uid'] . '">' . str_replace("{username}",$row['username'],$row['namestyle']) . '</a>';
+						$link = '<a href="' . $mybb->settings['bburl'] . '/member.php?action=profile&uid=' . $row['uid'] . '">' . str_replace("{username}",$row['username'],$row['namestyle']) . '</a>';
 					else
-						$link = '<a href="member.php?action=profile&uid=' . $row['uid'] . '">' . $row['username'] . '</a>';
+						$link = '<a href="' . $mybb->settings['bburl'] . '/member.php?action=profile&uid=' . $row['uid'] . '">' . $row['username'] . '</a>';
 
 	
 					// Add them both to the list and to the more detailed list.
@@ -2177,7 +2178,7 @@ function ViewPicture()
 						'username' => $row['username'],
 						'name' => $row['username'],
 						'group' => $row['gid'],
-						'href' => 'member.php?action=profile&uid=' . $row['uid'],
+						'href' => $mybb->settings['bburl'] . '/member.php?action=profile&uid=' . $row['uid'],
 						'link' => $link,
 						'hidden' => !empty($row['invisible']),
 					);
@@ -2201,7 +2202,7 @@ function ViewPicture()
 			c.ID_PICTURE,  c.ID_COMMENT, c.date, c.comment, c.ID_MEMBER, m.postnum, m.username, m.avatar  
 			FROM ".TABLE_PREFIX."gallery_comment as c
 			LEFT JOIN ".TABLE_PREFIX."users AS m ON (c.ID_MEMBER = m.uid) 
-		WHERE   c.ID_PICTURE = " . $context['gallery_pic']['ID_PICTURE'] . " ORDER BY c.ID_COMMENT DESC");
+		WHERE c.ID_PICTURE = " . $context['gallery_pic']['ID_PICTURE'] . " ORDER BY c.ID_COMMENT DESC");
 		
 		$context['gallery_comment_list'] = array();
 		while($row = $db->fetch_array($dbresult))
@@ -2270,14 +2271,14 @@ function ViewPicture()
 					echo $lang->gallery_form_keywords . ' ';
 					for($i = 0; $i < $keywordscount;$i++)
 					{
-						echo '<a href="ezgallery.php?action=search2&key=' . $keywords[$i] . '">' . $keywords[$i] . '</a>&nbsp;';
+						echo '<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=search2&key=' . $keywords[$i] . '">' . $keywords[$i] . '</a>&nbsp;';
 					}
 					echo '<br />';
 					
 				}
 
 				if ($context['gallery_pic']['username'] != '')
-					echo$lang->gallery_text_postedby . '<a href="member.php?action=profile&uid=' . $context['gallery_pic']['ID_MEMBER'] . '">'  . $context['gallery_pic']['username'] . '</a>' . $lang->gallery_at . $context['gallery_pic']['date'] . '<br /><br />';
+					echo$lang->gallery_text_postedby . '<a href="' . $mybb->settings['bburl'] . '/member.php?action=profile&uid=' . $context['gallery_pic']['ID_MEMBER'] . '">'  . $context['gallery_pic']['username'] . '</a>' . $lang->gallery_at . $context['gallery_pic']['date'] . '<br /><br />';
 				else 
 					echo $lang->gallery_text_postedby . $lang->gallery_guest  . $lang->gallery_at . $context['gallery_pic']['date'] . '<br /><br />';
 				
@@ -2311,15 +2312,15 @@ function ViewPicture()
 				if ($g_manage)
 					echo '&nbsp;<a href="' . $mybb->settings['bburl'] . '/' . $config['admin_dir'] . '/index.php?module=config/ezgallery&action=unapprove&id=' . $context['gallery_pic']['ID_PICTURE'] . '">' . $lang->gallery_text_unapprove . '</a>';
 				if ($g_manage || $g_edit_own && $context['gallery_pic']['ID_MEMBER'] == $mybb->user['uid'])
-					echo '&nbsp;<a href="ezgallery.php?action=edit&id=' . $context['gallery_pic']['ID_PICTURE']. '">' . $lang->gallery_text_edit . '</a>';
+					echo '&nbsp;<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=edit&id=' . $context['gallery_pic']['ID_PICTURE']. '">' . $lang->gallery_text_edit . '</a>';
 				if ($g_manage || $g_delete_own && $context['gallery_pic']['ID_MEMBER'] == $mybb->user['uid'])
-					echo '&nbsp;<a href="ezgallery.php?action=delete&id=' . $context['gallery_pic']['ID_PICTURE'] . '">' . $lang->gallery_text_delete . '</a>';
+					echo '&nbsp;<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=delete&id=' . $context['gallery_pic']['ID_PICTURE'] . '">' . $lang->gallery_text_delete . '</a>';
 
 
 				// Show report picture link
 				if (allowedTo('report'))
 				{
-					echo '&nbsp;<a href="ezgallery.php?action=report&id=' . $context['gallery_pic']['ID_PICTURE'] . '">' . $lang->gallery_text_reportpicture . '</a>';
+					echo '&nbsp;<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=report&id=' . $context['gallery_pic']['ID_PICTURE'] . '">' . $lang->gallery_text_reportpicture . '</a>';
 				}
 
 				echo '
@@ -2356,7 +2357,7 @@ echo '
 			//Show Add Comment
 			echo '
 				<tr class="tcat"><td colspan="2">
-				<a href="ezgallery.php?action=comment&id=' . $context['gallery_pic']['ID_PICTURE'] . '">' . $lang->gallery_text_addcomment  . '</a></td>
+				<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=comment&id=' . $context['gallery_pic']['ID_PICTURE'] . '">' . $lang->gallery_text_addcomment  . '</a></td>
 				</tr>';
 		}
 
@@ -2373,7 +2374,7 @@ echo '
 				echo $lang->gallery_guest;
 			else 
 				echo '
-			<a href="member.php?action=profile&uid=' . $row['ID_MEMBER'] . '">'  . $row['username'] . '</a><br />
+			<a href="' . $mybb->settings['bburl'] . '/member.php?action=profile&uid=' . $row['ID_MEMBER'] . '">'  . $row['username'] . '</a><br />
 			<span class="smalltext">' . $lang->gallery_text_posts .' ' . $row['postnum'] . '</span><br />';
 			// Display the users avatar
                  
@@ -2409,7 +2410,7 @@ echo '
 			echo '
 				<tr class="tcat">
 					<td colspan="2">
-					<a href="ezgallery.php?action=comment&id=' . $context['gallery_pic']['ID_PICTURE'] . '">' . $lang->gallery_text_addcomment . '</a>
+					<a href="' . $mybb->settings['bburl'] . '/ezgallery.php?action=comment&id=' . $context['gallery_pic']['ID_PICTURE'] . '">' . $lang->gallery_text_addcomment . '</a>
 					</td>
 				</tr>';
 		}
@@ -2419,7 +2420,7 @@ echo '
 	
 
 	// Link back to the gallery index
-	echo '<div align="center"><a href="ezgallery.php">' . $lang->gallery_text_returngallery . '</a></div><br />';
+	echo '<div align="center"><a href="' . $mybb->settings['bburl'] . '/ezgallery.php">' . $lang->gallery_text_returngallery . '</a></div><br />';
 
 
 
@@ -2427,8 +2428,6 @@ echo '
 	
 	gallery_footer();
 }
-
-
 
 function gallery_header()
 {

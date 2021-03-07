@@ -2,8 +2,8 @@
 /*
 ezGallery Lite
 by: vbgamer45
-http://www.mybbhacks.com
-Copyright 2011-2014  MyBBHacks.com 
+https://www.mybbhacks.com
+Copyright 2011-2020 MyBBHacks.com
 
 ############################################
 License Information:
@@ -192,7 +192,7 @@ function allowedTo($permission = '')
     if ($permission == 'autoapprove' && $permRow['autoapprove']) return $permRow['autoapprove'];
     if ($permission == 'manage'      && $permRow['manage'])      return $permRow['manage'];    
     
-    // Get access for additionnal userGroups
+    // Get access for additional userGroups
     $additionalGroups = preg_split('/,/', $mybb->user['additionalgroups']);
     foreach ($additionalGroups as $additionalGroup) {
         $permRow = $galleryPermissions[$additionalGroup];

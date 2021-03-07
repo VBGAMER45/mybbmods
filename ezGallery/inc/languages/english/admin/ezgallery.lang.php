@@ -61,7 +61,7 @@ $l['permissionname_ezgallery_autoapprove'] = 'Auto Approve Pictures';
 $l['permissionhelp_ezgallery_autoapprove'] = 'Pictures do not need to wait for approval.';
 
 $l['permissionname_ezgallery_manage'] = 'Admin Gallery';
-$l['permissionhelp_ezgallery_manage'] = 'Allows the user to add/delete/edit all catagories. Delete Comments, Delete Pictures, Approve Pictures';
+$l['permissionhelp_ezgallery_manage'] = 'Allows the user to add/delete/edit all categories. Delete Comments, Delete Pictures, Approve Pictures';
 $l['cannot_ezgallery_manage'] = 'You are not allowed to manage gallery.';
 
 //Main gallery table strings
@@ -255,7 +255,7 @@ $l['gallery_error_category'] = 'Category not found';
 
 $l['gallery_upload_max_filesize'] = 'PHP: Upload Max Filesize ';
 $l['gallery_post_max_size'] = 'PHP: Post Max Filesize ';
-$l['gallery_upload_limits_notes'] = 'The above PHP settings control how large a file will be accepeted by the gallery. These are settings are controlled by the php.ini or your webhost';
+$l['gallery_upload_limits_notes'] = 'The above PHP settings control how large a file will be accepted by the gallery. These are settings are controlled by the php.ini or your webhost';
 
 
 // Tabs description

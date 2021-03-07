@@ -2,8 +2,8 @@
 /*
 RSS Feed Poster
 by: vbgamer45
-http://www.mybbhacks.com
-Copyright 2010-2019  MyBBHacks.com
+https://www.mybbhacks.com
+Copyright 2010-2020  MyBBHacks.com
 
 ############################################
 License Information:
@@ -44,7 +44,8 @@ function UpdateRSSFeedBots($task)
 	$request = $db->write_query("
 			SELECT
 				ID_FEED, fid, feedurl, title, postername, updatetime, enabled, html,
-				uid, locked, articlelink, topicprefix, numbertoimport, importevery, markasread, usefeeddate  
+				uid, locked, articlelink, topicprefix, numbertoimport, importevery, markasread, usefeeddate,
+				  threadicon, threadprefix 
 			FROM ".TABLE_PREFIX."feedbot
 			WHERE enabled = 1");
 
@@ -169,8 +170,8 @@ function UpdateRSSFeedBots($task)
 								$posthandler = new PostDataHandler("insert");
 								$posthandler->action = "thread";
 								
-								if (strlen($msg_title) > 120)
-									$msg_title = substr($msg_title,0,115);
+								if (strlen($msg_title) >85)
+									$msg_title = substr($msg_title,0,84);
 								
 								$msg_title = trim($msg_title);
 								
@@ -181,7 +182,8 @@ function UpdateRSSFeedBots($task)
 								$new_thread = array(
 									"fid" => $feed['fid'],
 									"subject" => $feed['topicprefix'] . $msg_title,
-									"icon" => '',
+									"icon" => $feed['threadicon'],
+                                    'prefix' => $feed['threadprefix'],
 									"uid" => $feed['uid'],
 									"username" => $feed['postername'],
 									"message" => '[b]' . $msg_title . "[/b]\n\n" . $msg_body,
@@ -223,8 +225,7 @@ function UpdateRSSFeedBots($task)
                                 {
                                     if (!empty($context['feeditems'][$i]['feeddate']))
                                     {
-                                        $db->write_query("
-                                    UPDATE " . TABLE_PREFIX . "posts SET dateline = '" . $context['feeditems'][$i]['feeddate'] . "'
+                                        $db->write_query("UPDATE " . TABLE_PREFIX . "posts SET dateline = '" . $context['feeditems'][$i]['feeddate'] . "'
                                     WHERE pid = $pid");
 
                                         update_forum_lastpost($feed['fid']);
