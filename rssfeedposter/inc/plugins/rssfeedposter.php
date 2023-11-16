@@ -3,7 +3,7 @@
 RSS Feed Poster
 by: vbgamer45
 http://www.mybbhacks.com
-Copyright 2010-2020  MyBBHacks.com
+Copyright 2010-2022  MyBBHacks.com
 
 ############################################
 License Information:
@@ -30,7 +30,7 @@ function rssfeedposter_info()
 		"website"		=> "https://www.mybbhacks.com",
 		"author"		=> "vbgamer45",
 		"authorsite"		=> "https://www.mybbhacks.com",
-		"version"		=> "7.0",
+		"version"		=> "7.2.1",
 		"guid" 			=> "75763b9f3263e2646d7ebdfee6d4c895",
 		"compatibility"	=> "18*"
 		);
@@ -397,17 +397,17 @@ function rssfeedposter_admin()
 		if ($mybb->input['action'] == 'add2')
 		{
 			// Check Post
-			$feedposter_feedtitle = htmlspecialchars_uni($_REQUEST['feedposter_feedtitle']);
-			$feedposter_feedurl = trim($_REQUEST['feedposter_feedurl']);
-			$boardselect = intval($_REQUEST['boardselect']);
-			$feedposter_postername = str_replace('"','', $_REQUEST['feedposter_postername']);
+			$feedposter_feedtitle = addslashes($mybb->input['feedposter_feedtitle']);
+			$feedposter_feedurl = trim($mybb->input['feedposter_feedurl']);
+			$boardselect = intval($mybb->input['boardselect']);
+			$feedposter_postername = str_replace('"','', $mybb->input['feedposter_postername']);
 			$feedposter_postername = str_replace("'",'', $feedposter_postername);
 			$feedposter_postername = str_replace('\\','', $feedposter_postername);
 
-			$feedposter_postername = htmlspecialchars_uni($feedposter_postername);
-			$feedposter_topicprefix = htmlspecialchars_uni($_REQUEST['feedposter_topicprefix']);
-			$feedposter_importevery = intval($_REQUEST['feedposter_importevery']);
-			$feedposter_numbertoimport = intval($_REQUEST['feedposter_numbertoimport']);
+			$feedposter_postername = addslashes($feedposter_postername);
+			$feedposter_topicprefix = addslashes($mybb->input['feedposter_topicprefix']);
+			$feedposter_importevery = intval($mybb->input['feedposter_importevery']);
+			$feedposter_numbertoimport = intval($mybb->input['feedposter_numbertoimport']);
 
 			if ($feedposter_importevery < 5)
 				$feedposter_importevery = 5;
@@ -419,15 +419,15 @@ function rssfeedposter_admin()
 				$feedposter_numbertoimport  = 25;
 
 
-			$feedposter_feedenabled = isset($_REQUEST['feedposter_feedenabled']) ? 1 : 0;
-			$feedposter_htmlenabled = isset($_REQUEST['feedposter_htmlenabled']) ? 1 : 0;
-			$feedposter_topiclocked = isset($_REQUEST['feedposter_topiclocked']) ? 1 : 0;
+			$feedposter_feedenabled = isset($mybb->input['feedposter_feedenabled']) ? 1 : 0;
+			$feedposter_htmlenabled = isset($mybb->input['feedposter_htmlenabled']) ? 1 : 0;
+			$feedposter_topiclocked = isset($mybb->input['feedposter_topiclocked']) ? 1 : 0;
 
-			$feedposter_markread = isset($_REQUEST['feedposter_markread']) ? 1 : 0;
-			$usefeeddate = isset($_REQUEST['usefeeddate']) ? 1 :0;
+			$feedposter_markread = isset($mybb->input['feedposter_markread']) ? 1 : 0;
+			$usefeeddate = isset($mybb->input['usefeeddate']) ? 1 :0;
 
-			$threadprefix = (int) $_REQUEST['threadprefix'];
-			$threadicon = (int) $_REQUEST['icon'];
+			$threadprefix = (int) $mybb->input['threadprefix'];
+			$threadicon = (int) $mybb->input['icon'];
 
 			//Lookup the User ID of the postername
 			$memid = 0;
@@ -485,12 +485,6 @@ function rssfeedposter_admin()
 		$page->output_header($lang->rssfeedposter_addfeed);
 		$page->add_breadcrumb_item($lang->rssfeedposter_addfeedtopic);
 		$page->output_nav_tabs($tabs, 'rssfeedposter_addfeed');
-
-
-
-
-
-
 
 
 		$form = new Form("index.php?module=config/rssfeedposter&amp;action=add2", "post");
@@ -581,7 +575,7 @@ function rssfeedposter_admin()
 	{
 
 
-		$id = intval($_REQUEST['id']);
+		$id = intval($mybb->input['id']);
 
 		$query = $db->query("
 			SELECT
@@ -617,18 +611,18 @@ function rssfeedposter_admin()
 
 		if ($mybb->input['action'] == 'edit2')
 		{
-			$id = intval($_REQUEST['id']);
-			$feedposter_feedtitle = htmlspecialchars_uni($_REQUEST['feedposter_feedtitle']);
-			$feedposter_feedurl = trim($_REQUEST['feedposter_feedurl']);
-			$boardselect = intval($_REQUEST['boardselect']);
-			$feedposter_postername = str_replace('"','', $_REQUEST['feedposter_postername']);
+			$id = intval($mybb->input['id']);
+			$feedposter_feedtitle = addslashes($mybb->input['feedposter_feedtitle']);
+			$feedposter_feedurl = trim($mybb->input['feedposter_feedurl']);
+			$boardselect = intval($mybb->input['boardselect']);
+			$feedposter_postername = str_replace('"','', $mybb->input['feedposter_postername']);
 			$feedposter_postername = str_replace("'",'', $feedposter_postername);
 			$feedposter_postername = str_replace('\\','', $feedposter_postername);
 
-			$feedposter_postername = htmlspecialchars_uni($feedposter_postername);
-			$feedposter_topicprefix = htmlspecialchars_uni($_REQUEST['feedposter_topicprefix']);
-			$feedposter_importevery = intval($_REQUEST['feedposter_importevery']);
-			$feedposter_numbertoimport = intval($_REQUEST['feedposter_numbertoimport']);
+			$feedposter_postername = addslashes($feedposter_postername);
+			$feedposter_topicprefix = addslashes($mybb->input['feedposter_topicprefix']);
+			$feedposter_importevery = intval($mybb->input['feedposter_importevery']);
+			$feedposter_numbertoimport = intval($mybb->input['feedposter_numbertoimport']);
 
 			if ($feedposter_importevery < 5)
 				$feedposter_importevery = 5;
@@ -640,15 +634,15 @@ function rssfeedposter_admin()
 				$feedposter_numbertoimport  = 25;
 
 
-			$feedposter_feedenabled = isset($_REQUEST['feedposter_feedenabled']) ? 1 : 0;
-			$feedposter_htmlenabled = isset($_REQUEST['feedposter_htmlenabled']) ? 1 : 0;
-			$feedposter_topiclocked = isset($_REQUEST['feedposter_topiclocked']) ? 1 : 0;
+			$feedposter_feedenabled = isset($mybb->input['feedposter_feedenabled']) ? 1 : 0;
+			$feedposter_htmlenabled = isset($mybb->input['feedposter_htmlenabled']) ? 1 : 0;
+			$feedposter_topiclocked = isset($mybb->input['feedposter_topiclocked']) ? 1 : 0;
 
-			$feedposter_markread = isset($_REQUEST['feedposter_markread']) ? 1 : 0;
-			$usefeeddate = isset($_REQUEST['usefeeddate']) ? 1 : 0;
+			$feedposter_markread = isset($mybb->input['feedposter_markread']) ? 1 : 0;
+			$usefeeddate = isset($mybb->input['usefeeddate']) ? 1 : 0;
 
-			$threadprefix = (int) $_REQUEST['threadprefix'];
-			$threadicon = (int) $_REQUEST['icon'];
+			$threadprefix = (int) $mybb->input['threadprefix'];
+			$threadicon = (int) $mybb->input['icon'];
 
 
 
@@ -797,7 +791,7 @@ function rssfeedposter_admin()
 
 	if ($mybb->input['action'] == 'delete')
 	{
-		$id = intval($_REQUEST['id']);
+		$id = intval($mybb->input['id']);
 		$db->write_query("DELETE FROM ".TABLE_PREFIX."feedbot  WHERE ID_FEED = $id
 				");
 

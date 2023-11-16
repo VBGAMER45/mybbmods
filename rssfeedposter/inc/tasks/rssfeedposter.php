@@ -3,12 +3,12 @@
 RSS Feed Poster
 by: vbgamer45
 https://www.mybbhacks.com
-Copyright 2010-2020  MyBBHacks.com
+Copyright 2010-2022  MyBBHacks.com
 
 ############################################
 License Information:
 
-Links to http://www.mybbhacks.com must remain unless
+Links to https://www.mybbhacks.com must remain unless
 branding free option is purchased.
 #############################################
 */
@@ -18,22 +18,7 @@ $maxitemcount = 0;
 $tag = '';
 $tag_attrs = '';
 $insideitem = false;
-$depth = array();
 
-
-
-
-function startElement2($parser, $name, $attrs)
-{
-   global $depth;
-   @$depth[$parser]++;
-}
-
-function endElement2($parser, $name)
-{
-   global $depth;
-   $depth[$parser]--;
-}
 
 function UpdateRSSFeedBots($task)
 {
@@ -170,18 +155,20 @@ function UpdateRSSFeedBots($task)
 								$posthandler = new PostDataHandler("insert");
 								$posthandler->action = "thread";
 								
-								if (strlen($msg_title) >85)
-									$msg_title = substr($msg_title,0,84);
-								
 								$msg_title = trim($msg_title);
-								
+
 								if (!empty($feed['topicprefix']))
 									$feed['topicprefix'] = trim($feed['topicprefix']) . " ";
+
+								$msg_title = $feed['topicprefix'] . $msg_title;
+
+								if (strlen($msg_title) >85)
+									$msg_title = substr($msg_title,0,84);
 							
 
 								$new_thread = array(
 									"fid" => $feed['fid'],
-									"subject" => $feed['topicprefix'] . $msg_title,
+									"subject" =>  $msg_title,
 									"icon" => $feed['threadicon'],
                                     'prefix' => $feed['threadprefix'],
 									"uid" => $feed['uid'],
@@ -194,7 +181,14 @@ function UpdateRSSFeedBots($task)
 								);
 								
 								$new_thread['modoptions']  = array('closethread' => $feed['locked']);
-								
+
+								// Set up the thread options from the input.
+								$new_thread['options'] = array(
+									"signature" => 1,
+									"subscriptionmethod" => 0,
+									"disablesmilies" => 0
+								);
+
 								$posthandler->set_data($new_thread);
 								$valid_thread = $posthandler->validate_thread();
 								
@@ -233,9 +227,6 @@ function UpdateRSSFeedBots($task)
 
                                     }
                                 }
-								
-								
-								
 
 								// Add Feed Log
 								$fid = $feed['ID_FEED'];

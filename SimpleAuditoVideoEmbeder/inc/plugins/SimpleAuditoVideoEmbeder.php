@@ -1,9 +1,9 @@
 <?php
 /*
-Simple Audito Video Embeder
+Simple Audio Video Embeder
 by: vbgamer45
 https://www.mybbhacks.com
-Copyright 2010-2021 MyBBHacks.com
+Copyright 2010-2023 MyBBHacks.com
 
 ############################################
 License Information:
@@ -25,7 +25,7 @@ $plugins->add_hook('admin_load','SimpleAuditoVideoEmbeder_admin');
 // remove old xss security issue flv player
 if (file_exists(MYBB_ROOT . "videos/player_flv_maxi.swf"))
 {
- 	unlink(MYBB_ROOT . "videos/player_flv_maxi.swf");
+ 	@unlink(MYBB_ROOT . "videos/player_flv_maxi.swf");
 }
 
 function SimpleAuditoVideoEmbeder_info()
@@ -37,7 +37,7 @@ function SimpleAuditoVideoEmbeder_info()
 		"website"		=> "http://www.mybbhacks.com",
 		"author"		=> "vbgamer45",
 		"authorsite"		=> "http://www.mybbhacks.com",
-		"version"		=> "6.0",
+		"version"		=> "6.3",
 		"guid" 			=> "dd85ea1c4c28a886643aabd723af83cf",
 		"compatibility"	=> "18*"
 		);
@@ -77,10 +77,96 @@ function SimpleAuditoVideoEmbeder_install()
 ) ");
 
 
+
+
+	// Load Language file
+	SimpleAuditoVideoEmbeder_loadlanguage();
+
+
+ 	$query	= $db->simple_select("settinggroups", "COUNT(*) as counts");
+	$dorder = $db->fetch_field($query, 'counts') + 1;
+
+	$groupid = $db->insert_query('settinggroups', array(
+		'name'		=> 'simpleaudiovideoembed',
+		'title'		=> 'Simple Audio Video Embeder',
+		'description'	=> $lang->mediapro_settings2,
+		'disporder'	=> $dorder,
+		'isdefault'	=> '0'
+	));
+
+	$dorder_set = 0;
+
+	$new_setting[] = array(
+		'name'		=> 'mediapro_default_width',
+		'title'		=> $lang->mediapro_txt_default_width,
+		'description'	=> $lang->mediapro_txt_default_info,
+		'optionscode'	=> 'numeric',
+		'value'		=> '0',
+		'disporder'	=> ++$dorder_set,
+		'gid'		=> $groupid
+	);
+
+
+	$new_setting[] = array(
+		'name'		=> 'mediapro_default_height',
+		'title'		=> $lang->mediapro_txt_default_height,
+		'description'	=> $lang->mediapro_txt_default_info,
+		'optionscode'	=> 'numeric',
+		'value'		=> '0',
+		'disporder'	=> ++$dorder_set,
+		'gid'		=> $groupid
+	);
+
+
+	$new_setting[] = array(
+		'name'		=> 'mediapro_max_embeds',
+		'title'		=> $lang->mediapro_max_embeds,
+		'description'	=> '',
+		'optionscode'	=> 'numeric',
+		'value'		=> '0',
+		'disporder'	=> ++$dorder_set,
+		'gid'		=> $groupid
+	);
+
+
+
+	$new_setting[] = array(
+		'name'		=> 'mediapro_disablemobile',
+		'title'		=> $lang->mediapro_disablemobile,
+		'description'	=> '',
+		'optionscode'	=> 'yesno',
+		'value'		=> '0',
+		'disporder'	=> ++$dorder_set,
+		'gid'		=> $groupid
+	);
+
+
+
+	$new_setting[] = array(
+		'name'		=> 'mediapro_showlink',
+		'title'		=> $lang->mediapro_showlink,
+		'description'	=> '',
+		'optionscode'	=> 'yesno',
+		'value'		=> '0',
+		'disporder'	=> ++$dorder_set,
+		'gid'		=> $groupid
+	);
+
+
+
+	$db->insert_query_multiple("settings", $new_setting);
+	rebuild_settings();
+
+}
+
+function SimpleAudioEmbeder_InstallDB()
+{
+	global $db;
+
 $db->query("REPLACE INTO ".TABLE_PREFIX."mediapro_sites
 	(ID,title, website, height,width,  regexmatch, embedcode)
 VALUES
-(1, 'Youtube','http://www.youtube.com', 385,640, 'htt(p|ps)://[" . '\\' .'\\' . "w.]+youtube" . '\\' .'\\' . ".[" . '\\' .'\\' . "w]+/watch[(" . '\\' .'\\' . "?|" . '\\' .'\\' . "?feature=player_embedded&amp;)" . '\\' .'\\' . "#!]+v=([" . '\\' .'\\' . "w-]+)[" . '\\' .'\\' . "w&;+=-]*[" . '\\' .'\\' . "#t=]*([" . '\\' .'\\' . "d]*)[&;10wshdq=]*','" . '<iframe width="480" height="600" src="//www.youtube.com/embed/$2?fs=1&start=$3" frameborder="0" allowfullscreen></iframe>' . "'),
+(1, 'Youtube','http://www.youtube.com', 385,640, 'htt(p|ps)://[" . '\\' .'\\' . "w.]+youtube" . '\\' .'\\' . ".[" . '\\' .'\\' . "w]+/watch[(" . '\\' .'\\' . "?|" . '\\' .'\\' . "?feature=player_embedded&amp;)" . '\\' .'\\' . "#!]+v=([" . '\\' .'\\' . "w-]+)[" . '\\' .'\\' . "w&;+=-]*[" . '\\' .'\\' . "#t=]*([" . '\\' .'\\' . "d]*)[&;10wshdq=]*','" . '<iframe width="480" height="600" src="//www.youtube.com/embed/$2?fs=1&start=$3" frameborder="0" allowfullscreen="true"></iframe>' . "'),
 
 (2, 'Metacafe','http://www.metacafe.com', 334,540, 'http://www" . '\\' .'\\' . ".metacafe" . '\\' .'\\' . ".com/watch/([" . '\\' .'\\' . "w-]+/[" . '\\' .'\\' . "w_]*)[" . '\\' .'\\' . "w&;=" . '\\' .'\\' . "+_" . '\\' .'\\' . "-" . '\\' .'\\' . "/]*','" . '<embed src="http://www.metacafe.com/fplayer/$1.swf" width="480" height="600" wmode="transparent" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" wmode="transparent"></embed>' . "'),
 
@@ -90,7 +176,7 @@ VALUES
        <param name="movie" value="http://www.facebook.com/v/$1" />
        <embed src="http://www.facebook.com/v/$1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="480" height="600"></embed></object>' . "'),
 
-(4, 'Vimeo','http://www.vimeo.com', 385,640, 'htt(p|ps)://[w" . '\\' .'\\' . ".]*vimeo" . '\\' .'\\' . ".com/([" . '\\' .'\\' . "d]+)[" . '\\' .'\\' . "w&;=" . '\\' .'\\' . "?+%/-]*','" . '<iframe src="//player.vimeo.com/video/$2" width="480" height="600" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>' . "'),
+(4, 'Vimeo','http://www.vimeo.com', 385,640, 'htt(p|ps)://[w" . '\\' .'\\' . ".]*vimeo" . '\\' .'\\' . ".com/([" . '\\' .'\\' . "d]+)[" . '\\' .'\\' . "w&;=" . '\\' .'\\' . "?+%/-]*','" . '<iframe src="//player.vimeo.com/video/$2" width="480" height="600" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowFullScreen="true"></iframe>' . "'),
 
 
 (6, 'Google Video', 'http://video.google.com',  385,640,'[http://]*video" . '\\' .'\\' . ".google" . '\\' .'\\' . ".[" . '\\' .'\\' . "w.]+/videoplay" . '\\' .'\\' . "?docid=([-" . '\\' .'\\' . "d]+)[&" . '\\' .'\\' . "w;=" . '\\' .'\\' . "+.-]*','" . '<embed style="width:480px; height:600px;" id="VideoPlayback" type="application/x-shockwave-flash" src="http://video.google.com/googleplayer.swf?docId=$1" flashvars="" wmode="transparent"> </embed>' . "')
@@ -166,7 +252,7 @@ VALUES
 
 
 (24, 'DailyMotion', 'http://www.dailymotion.com', 360,480, 'htt(p|ps)://www.dailymotion.com/video/([A-Z0-9]*)_([^<>]+)ZSPLITMZhtt(p|ps)://www.dailymotion.com/video/([A-Z0-9]*)ZSPLITMZhtt(p|ps)://dai.ly/([A-Z0-9]*)','" . '
-<iframe frameborder="0" width="480" height="600" src="//www.dailymotion.com/embed/video/$2" allowfullscreen></iframe>
+<iframe frameborder="0" width="480" height="600" src="//www.dailymotion.com/embed/video/$2" allowfullscreen="true"></iframe>
 ' . "'),
 
 
@@ -313,19 +399,6 @@ VALUES
 ");
 
 
-$db->query("REPLACE INTO ".TABLE_PREFIX."mediapro_sites
-	(ID,title, website, height,width,  regexmatch, embedcode)
-VALUES
-	(68, 'Zippyshare', 'http://www.zippyshare.com', 300,20, 'http://www([0-9]*).zippyshare.com/v/([A-Z0-9]*)/file.html','" . '
-<object></object><script type="text/javascript">var zippywww="$1";var zippyfile="$2";var zippydown="ffffff";var zippyfront="000000";var zippyback="ffffff";var zippylight="000000";var zippywidth=480;var zippyauto=false;var zippyvol=80;var zippydwnbtn = 1;</script><script type="text/javascript" src="http://api.zippyshare.com/api/embed.js"></script>
-' . "'),
-	(69, 'Zippyshare 2', 'http://www.zippyshare.com', 375,500, 'http://([A-Z0-9]*).zippyshare.com/view.jsp" . '\\' .'\\' . "?locale=([A-Z0-9]*)" . '\\' .'\\' . "&amp;key=([A-Z0-9]*)','" . '
-<object></object><script type="text/javascript">var zippywww="$1";var zippyfile="$3";var zippydown="ffffff";var zippyfront="000000";var zippyback="ffffff";var zippylight="000000";var zippywidth=480;var zippyauto=false;var zippyvol=80;var zippydwnbtn = 1;</script><script type="text/javascript" src="http://api.zippyshare.com/api/embed.js"></script>
-' . "')
-
-
-");
-
 // 1.1.3 1.1.4
 
 $db->query("REPLACE INTO ".TABLE_PREFIX."mediapro_sites
@@ -334,7 +407,7 @@ VALUES
 (70, 'Google Maps', 'http://maps.google.com/', 350,425, 'htt(p|ps)://(maps" . '\\' .'\\' . ".google" . '\\' .'\\' . ".[^" . '"' . ">]+/" . '\\' .'\\' . "w*?" . '\\' .'\\' . "?[^" . '"' . ">]+)','" . '
 <iframe width="480" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="htt$1://$2&output=svembed"></iframe>
 ' . "'),
-(71, 'Youtube Short Url','http://www.youtube.com', 385,640, 'htt(p|ps)://[w" . '\\' .'\\' . ".]*youtu" . '\\' .'\\' . ".be/watch" . '\\' .'\\' . "?v=([-a-zA-Z0-9&;+=_]*)ZSPLITMZhtt(p|ps)://[w" . '\\' .'\\' . ".]*youtu" . '\\' .'\\' . ".be/([-a-zA-Z0-9&;+=_]*)','" . '<iframe title="YouTube video player" width="480" height="600" src="//www.youtube.com/embed/$2?rel=0" frameborder="0" allowfullscreen></iframe>' . "')
+(71, 'Youtube Short Url','http://www.youtube.com', 385,640, 'htt(p|ps)://[w" . '\\' .'\\' . ".]*youtu" . '\\' .'\\' . ".be/watch" . '\\' .'\\' . "?v=([-a-zA-Z0-9&;+=_]*)ZSPLITMZhtt(p|ps)://[w" . '\\' .'\\' . ".]*youtu" . '\\' .'\\' . ".be/([-a-zA-Z0-9&;+=_]*)','" . '<iframe title="YouTube video player" width="480" height="600" src="//www.youtube.com/embed/$2?rel=0" frameborder="0" allowFullScreen="true"></iframe>' . "')
 
 
 ");
@@ -592,7 +665,7 @@ VALUES
 $db->query("REPLACE INTO ".TABLE_PREFIX."mediapro_sites
 	(ID,title, website, height,width,  regexmatch, embedcode)
 VALUES
-(98, 'Instagram','http://instagram.com', 360,640, 'htt(p|ps)://[www" . '\\' .'\\' . ".]*instagram.com/p/([A-Za-z0-9" . '\\' .'\\' . "-" . '\\' .'\\' . "_]*)/([^<>]+)','" . '<div><blockquote class="instagram-media" data-instgrm-version="4" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:8px;"> <div style=" background:#F8F8F8; line-height:0; margin-top:40px; padding:50.0% 0; text-align:center; width:100%;"> <div style=" background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAAGFBMVEUiIiI9PT0eHh4gIB4hIBkcHBwcHBwcHBydr+JQAAAACHRSTlMABA4YHyQsM5jtaMwAAADfSURBVDjL7ZVBEgMhCAQBAf//42xcNbpAqakcM0ftUmFAAIBE81IqBJdS3lS6zs3bIpB9WED3YYXFPmHRfT8sgyrCP1x8uEUxLMzNWElFOYCV6mHWWwMzdPEKHlhLw7NWJqkHc4uIZphavDzA2JPzUDsBZziNae2S6owH8xPmX8G7zzgKEOPUoYHvGz1TBCxMkd3kwNVbU0gKHkx+iZILf77IofhrY1nYFnB/lQPb79drWOyJVa/DAvg9B/rLB4cC+Nqgdz/TvBbBnr6GBReqn/nRmDgaQEej7WhonozjF+Y2I/fZou/qAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;"></div></div><p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><a href="https://instagram.com/p/$2/" style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;" target="_top"> </a></p></div></blockquote><script async defer src="//platform.instagram.com/en_US/embeds.js"></script></div>
+(98, 'Instagram','http://instagram.com', 360,640, 'htt(p|ps)://[www" . '\\' .'\\' . ".]*instagram.com/(p|reel)/([A-Za-z0-9" . '\\' .'\\' . "-" . '\\' .'\\' . "_]*)/([^<>]+)','" . '<blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/$2/$3/" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:16px;"> <a href="https://www.instagram.com/$2/$3/" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <div style=" display: flex; flex-direction: row; align-items: center;"> <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div></div></div><div style="padding: 19% 0;"></div> <div style="display:block; height:50px; margin:0 auto 12px; width:50px;"><svg width="50px" height="50px" viewBox="0 0 60 60" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-511.000000, -20.000000)" fill="#000000"><g><path d="M556.869,30.41 C554.814,30.41 553.148,32.076 553.148,34.131 C553.148,36.186 554.814,37.852 556.869,37.852 C558.924,37.852 560.59,36.186 560.59,34.131 C560.59,32.076 558.924,30.41 556.869,30.41 M541,60.657 C535.114,60.657 530.342,55.887 530.342,50 C530.342,44.114 535.114,39.342 541,39.342 C546.887,39.342 551.658,44.114 551.658,50 C551.658,55.887 546.887,60.657 541,60.657 M541,33.886 C532.1,33.886 524.886,41.1 524.886,50 C524.886,58.899 532.1,66.113 541,66.113 C549.9,66.113 557.115,58.899 557.115,50 C557.115,41.1 549.9,33.886 541,33.886 M565.378,62.101 C565.244,65.022 564.756,66.606 564.346,67.663 C563.803,69.06 563.154,70.057 562.106,71.106 C561.058,72.155 560.06,72.803 558.662,73.347 C557.607,73.757 556.021,74.244 553.102,74.378 C549.944,74.521 548.997,74.552 541,74.552 C533.003,74.552 532.056,74.521 528.898,74.378 C525.979,74.244 524.393,73.757 523.338,73.347 C521.94,72.803 520.942,72.155 519.894,71.106 C518.846,70.057 518.197,69.06 517.654,67.663 C517.244,66.606 516.755,65.022 516.623,62.101 C516.479,58.943 516.448,57.996 516.448,50 C516.448,42.003 516.479,41.056 516.623,37.899 C516.755,34.978 517.244,33.391 517.654,32.338 C518.197,30.938 518.846,29.942 519.894,28.894 C520.942,27.846 521.94,27.196 523.338,26.654 C524.393,26.244 525.979,25.756 528.898,25.623 C532.057,25.479 533.004,25.448 541,25.448 C548.997,25.448 549.943,25.479 553.102,25.623 C556.021,25.756 557.607,26.244 558.662,26.654 C560.06,27.196 561.058,27.846 562.106,28.894 C563.154,29.942 563.803,30.938 564.346,32.338 C564.756,33.391 565.244,34.978 565.378,37.899 C565.522,41.056 565.552,42.003 565.552,50 C565.552,57.996 565.522,58.943 565.378,62.101 M570.82,37.631 C570.674,34.438 570.167,32.258 569.425,30.349 C568.659,28.377 567.633,26.702 565.965,25.035 C564.297,23.368 562.623,22.342 560.652,21.575 C558.743,20.834 556.562,20.326 553.369,20.18 C550.169,20.033 549.148,20 541,20 C532.853,20 531.831,20.033 528.631,20.18 C525.438,20.326 523.257,20.834 521.349,21.575 C519.376,22.342 517.703,23.368 516.035,25.035 C514.368,26.702 513.342,28.377 512.574,30.349 C511.834,32.258 511.326,34.438 511.181,37.631 C511.035,40.831 511,41.851 511,50 C511,58.147 511.035,59.17 511.181,62.369 C511.326,65.562 511.834,67.743 512.574,69.651 C513.342,71.625 514.368,73.296 516.035,74.965 C517.703,76.634 519.376,77.658 521.349,78.425 C523.257,79.167 525.438,79.673 528.631,79.82 C531.831,79.965 532.853,80.001 541,80.001 C549.148,80.001 550.169,79.965 553.369,79.82 C556.562,79.673 558.743,79.167 560.652,78.425 C562.623,77.658 564.297,76.634 565.965,74.965 C567.633,73.296 568.659,71.625 569.425,69.651 C570.167,67.743 570.674,65.562 570.82,62.369 C570.966,59.17 571,58.147 571,50 C571,41.851 570.966,40.831 570.82,37.631"></path></g></g></g></svg></div><div style="padding-top: 8px;"> <div style=" color:#3897f0; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:550; line-height:18px;">View this post on Instagram</div></div><div style="padding: 12.5% 0;"></div> <div style="display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;"><div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);"></div> <div style="background-color: #F4F4F4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;"></div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);"></div></div><div style="margin-left: 8px;"> <div style=" background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;"></div> <div style=" width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-bottom: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg)"></div></div><div style="margin-left: auto;"> <div style=" width: 0px; border-top: 8px solid #F4F4F4; border-right: 8px solid transparent; transform: translateY(16px);"></div> <div style=" background-color: #F4F4F4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);"></div> <div style=" width: 0; height: 0; border-top: 8px solid #F4F4F4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);"></div></div></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center; margin-bottom: 24px;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 224px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 144px;"></div></div></a><p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><a href="https://www.instagram.com/$2/$3/" style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;" target="_blank"> </a></p></div></blockquote> <script async src="//www.instagram.com/embed.js"></script>
 ' . "')
 ");
 
@@ -606,7 +679,7 @@ VALUES
 
 '
  . "'),
- (100, 'Sendvid','http://sendvid.com', 360,640, 'http://sendvid.com/([A-Za-z0-9]*)','" . '<iframe width="640" height="360" src="//sendvid.com/embed/$1" frameborder="0" allowfullscreen></iframe>
+ (100, 'Sendvid','http://sendvid.com', 360,640, 'http://sendvid.com/([A-Za-z0-9]*)','" . '<iframe width="640" height="360" src="//sendvid.com/embed/$1" frameborder="0" allowFullScreen="true"></iframe>
 ' . "')
 
  ");
@@ -615,11 +688,11 @@ VALUES
 $db->query("REPLACE INTO ".TABLE_PREFIX."mediapro_sites
 	(ID,title, website, height,width,  regexmatch, embedcode)
 VALUES
-(101, 'Streamable.com','https://streamable.com', 360,640, 'htt(p|ps)://streamable.com/([A-Za-z0-9]*)','" . '<div style="width: 100%; height: 0px; position: relative; padding-bottom: 56.250%;"><iframe src="https://streamable.com/s/$2" frameborder="0" width="100%" height="100%" allowfullscreen style="width: 100%; height: 100%; position: absolute;"></iframe></div>
+(101, 'Streamable.com','https://streamable.com', 360,640, 'htt(p|ps)://streamable.com/([A-Za-z0-9]*)','" . '<div style="width: 100%; height: 0px; position: relative; padding-bottom: 56.250%;"><iframe src="https://streamable.com/s/$2" frameborder="0" width="100%" height="100%" allowFullScreen="true" style="width: 100%; height: 100%; position: absolute;"></iframe></div>
 ' . "'),
 (102, 'imgur','https://imgur.com', 360,640, 'htt(p|ps)://[A-Za-z" . '\\' .'\\' . ".]*imgur.com/([A-Za-z0-9]*)[" . '\\' .'\\' . ".A-Za-z]*','" . '<blockquote class="imgur-embed-pub" lang="en" data-id="$2"></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
 ' . "'),
-(103, 'Youtube Playlist','https://youtube.com', 360,640, 'htt(p|ps)://www.youtube.com/playlist" . '\\' .'\\' . "?list=([A-Za-z0-9]*)','" . '<iframe width="640" height="360" src="https://www.youtube.com/embed/videoseries?list=$2" frameborder="0" allowfullscreen></iframe>
+(103, 'Youtube Playlist','https://youtube.com', 360,640, 'htt(p|ps)://www.youtube.com/playlist" . '\\' .'\\' . "?list=([A-Za-z0-9]*)','" . '<iframe width="640" height="360" src="https://www.youtube.com/embed/videoseries?list=$2" frameborder="0" allowFullScreen="true"></iframe>
 ' . "')
 ");
 
@@ -629,7 +702,7 @@ $db->query("REPLACE INTO ".TABLE_PREFIX."mediapro_sites
 VALUES
 (104, 'Pastebin','https://pastebin.com', 360,640, 'https://pastebin.com/([A-Za-z0-9]*)','" . '<iframe src="https://pastebin.com/embed_iframe/$1" style="border:none;width:100%"></iframe>
 ' . "'),
-(105, 'Twitch V2','https://www.twitch.tv', 378,620, 'https://go.twitch.tv/videos/([A-Za-z0-9]*)ZSPLITMZhttps://www.twitch.tv/videos/([A-Za-z0-9]*)','" . '<div id="twitch-embed#playercount#"></div>
+(105, 'Twitch Videos','https://www.twitch.tv', 378,620, 'https://go.twitch.tv/videos/([A-Za-z0-9_" . '\\' .'\\' . "-" . '\\' .'\\' . "?]*)ZSPLITMZhttps://www.twitch.tv/videos/([A-Za-z0-9_" . '\\' .'\\' . "-" . '\\' .'\\' . "?]*)','" . '<div id="twitch-embed#playercount#"></div>
 
 <script src="https://player.twitch.tv/js/embed/v1.js"></script>
 
@@ -638,12 +711,13 @@ VALUES
     video: "$1",
     height: "600",
     width: "480",
+    autoplay: false,
     parent: "#parent#"
   });
 </script>
 
 ' . "'),
-(106, 'Ted Talks','https://www.ted.com', 480,854, 'https://www.ted.com/talks/([A-Za-z0-9_]*)','" . '<iframe src="https://embed.ted.com/talks/$1" width="480" height="600"  frameborder="0" scrolling="no" allowfullscreen></iframe>
+(106, 'Ted Talks','https://www.ted.com', 480,854, 'https://www.ted.com/talks/([A-Za-z0-9_]*)','" . '<iframe src="https://embed.ted.com/talks/$1" width="480" height="600"  frameborder="0" scrolling="no" allowFullScreen="true"></iframe>
 ' . "'),
 (108, 'Spotify','https://spotify.com',80,250, 'https?://open.spotify.com/([A-Za-z0-9]*)/([A-Za-z0-9]*)(" . '\\' .'\\' . "?)?([A-Za-z0-9" . '\\' .'\\' . "=" . '\\' .'\\' . "_" . '\\' .'\\' . "-]*)','" . '<iframe src="https://open.spotify.com/embed/$1/$2" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
 ' . "')
@@ -655,7 +729,7 @@ $db->query("REPLACE INTO ".TABLE_PREFIX."mediapro_sites
 VALUES
 (109, 'Facebook Posts','https://facebook.com', 500,500, 'htt(p|ps)://([A-Za-z]*).facebook.com/([A-Za-z0-9_" . '\\' .'\\' . ".]*)/posts/([0-9]*)','" . '<div id="fb-root"></div><script>(function(d,s,id){var js, fjs = d.getElementsByTagName(s)[0];if (d.getElementById(id)) return;js = d.createElement(s); js.id = id;js.src = "//connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v2.12";fjs.parentNode.insertBefore(js, fjs);}(document, "script", "facebook-jssdk"));</script><div class="fb-post" data-href="https://www.facebook.com/$3/posts/$4/" data-width="500" data-show-text="true"></div>
 ' . "'),
-(110, 'US News','http://www.usnews.com',332,590, 'htt(p|ps):\/\/www\.usnews\.com\/news\/features\/news-video\?([\w.=_&;]+?)videoId=(\d+)','" . '<iframe width="590" height="332" src="http://launch.newsinc.com/?type=VideoPlayer/Single&widgetId=1&videoId=$3" frameborder="no" scrolling="no" noresize marginwidth="0" marginheight="0" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>
+(110, 'US News','http://www.usnews.com',332,590, 'htt(p|ps):\/\/www\.usnews\.com\/news\/features\/news-video\?([\w.=_&;]+?)videoId=(\d+)','" . '<iframe width="590" height="332" src="http://launch.newsinc.com/?type=VideoPlayer/Single&widgetId=1&videoId=$3" frameborder="no" scrolling="no" noresize marginwidth="0" marginheight="0" allowFullScreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>
 ' . "'),
 (111, 'Local/Remote Ogm', '', 350,425, 'htt(p|ps)://([^<>]+)" . '\\' .'\\' . ".ogm','" . '
 <video height="600" width="480" controls>
@@ -685,7 +759,7 @@ VALUES
 $db->query("REPLACE INTO ".TABLE_PREFIX."mediapro_sites
 	(ID,title, website, height,width,  regexmatch, embedcode)
 VALUES
-(114, 'vbox7','https://www.vbox7.com',  315,560, 'https://www.vbox7.com/play:([A-Za-z0-9]*)','" . '<iframe width="560" height="315" src="https://www.vbox7.com/emb/external.php?vid=$1" frameborder="0" allowfullscreen></iframe>
+(114, 'vbox7','https://www.vbox7.com',  315,560, 'https://www.vbox7.com/play:([A-Za-z0-9]*)','" . '<iframe width="560" height="315" src="https://www.vbox7.com/emb/external.php?vid=$1" frameborder="0" allowFullScreen="true"></iframe>
 ' . "'),
 (115, 'Local MP3', '', 350,425, 'htt(p|ps)://([^<>]+)" . '\\' .'\\' . ".mp3','" . '
 <audio controls>
@@ -712,10 +786,10 @@ VALUES
 $db->query("REPLACE INTO ".TABLE_PREFIX."mediapro_sites
 	(ID,title, website, height,width,  regexmatch, embedcode)
 VALUES
-(120, 'Videoclip.bg','https://videoclip.bg',360,640, 'htt(p|ps)://www.videoclip.bg/watch/([0-9]*)_([A-Za-z0-9-]*)','" . '<iframe width="640" height="360" src="https://www.videoclip.bg/embed/$2" frameborder="0" allowfullscreen allowscriptaccess></iframe>
+(120, 'Videoclip.bg','https://videoclip.bg',360,640, 'htt(p|ps)://www.videoclip.bg/watch/([0-9]*)_([A-Za-z0-9-]*)','" . '<iframe width="640" height="360" src="https://www.videoclip.bg/embed/$2" frameborder="0" allowFullScreen="true" allowscriptaccess></iframe>
 
 ' . "'),
-(121, 'Gfycat','https://gfycat.com',360,640, 'https://gfycat.com/([A-Za-z0-9]*)([A-Za-z0-9-]*)','" . '<div style="position:relative; padding-bottom:calc(56.25% + 44px)"><iframe src="https://gfycat.com/ifr/$1" frameborder="0" scrolling="no" width="100%" height="100%" style="position:absolute;top:0;left:0;" allowfullscreen></iframe></div>
+(121, 'Gfycat','https://gfycat.com',360,640, 'https://gfycat.com/([A-Za-z0-9]*)([A-Za-z0-9-]*)','" . '<div style="position:relative; padding-bottom:calc(56.25% + 44px)"><iframe src="https://gfycat.com/ifr/$1" frameborder="0" scrolling="no" width="100%" height="100%" style="position:absolute;top:0;left:0;" allowFullScreen="true"></iframe></div>
 
 ' . "')
 ");
@@ -726,10 +800,10 @@ VALUES
 $db->query("REPLACE INTO ".TABLE_PREFIX."mediapro_sites
 	(ID,title, website, height,width,  regexmatch, embedcode)
 VALUES
-(122, 'codepen.io','https://codepen.io',360,640, 'https?://codepen.io/(.+)/pen/(.+)','" . '<iframe width="800" height="450" src="https://codepen.io/$1/full/$2" frameborder="0" allowfullscreen title="CodePen.io"></iframe>
+(122, 'codepen.io','https://codepen.io',360,640, 'https?://codepen.io/(.+)/pen/(.+)','" . '<iframe width="800" height="450" src="https://codepen.io/$1/full/$2" frameborder="0" allowFullScreen="true" title="CodePen.io"></iframe>
 
 ' . "'),
-(123, 'ustream.tv','https://ustream.tv',360,640, 'https?://ustream.tv/channel/([0-9]+)','" . '<iframe width="800" height="450" src="https://ustream.tv/embed/$1" frameborder="0" allowfullscreen title="UStream video"></iframe>
+(123, 'ustream.tv','https://ustream.tv',360,640, 'https?://ustream.tv/channel/([0-9]+)','" . '<iframe width="800" height="450" src="https://ustream.tv/embed/$1" frameborder="0" allowFullScreen="true" title="UStream video"></iframe>
 
 ' . "')
 ");
@@ -743,7 +817,7 @@ VALUES
 <script async src="https://embed.redditmedia.com/widgets/platform.js" charset="UTF-8"></script>
 
 ' . "'),
-(125, 'Twitch Clips', 'https://twitch.tv/', 378, 620, 'https://clips.twitch.tv/([A-Za-z0-9]*)','" . '<iframe src="https://clips.twitch.tv/embed?clip=$1&parent=#parent#" frameborder="0" allowfullscreen="true" scrolling="no" height="378" width="620"></iframe>' . "'),
+(125, 'Twitch Clips', 'https://twitch.tv/', 378, 620, 'https://([A-Za-z0-9_]*).twitch.tv/([A-Za-z0-9_\\\-]*)ZSPLITMZhttps://www.twitch.tv/clip/([A-Za-z0-9_]*)/([A-Za-z0-9_\\\-]*)','" . '<iframe src="https://clips.twitch.tv/embed?clip=$2&parent=#parent#" frameborder="0" allowfullscreen="true" scrolling="no" height="378" width="620"></iframe>' . "'),
 (126, 'GitHub Gist', 'https://github.com',  300, 700, 'https?://gist.github.com/([A-Za-z0-9-]*/[A-Za-z0-9]*)','" . '<script src="https://gist.github.com/$1.js"></script>'  . "')
 ");
 
@@ -751,95 +825,39 @@ VALUES
 $db->query("REPLACE INTO ".TABLE_PREFIX."mediapro_sites
 	(ID,title, website, height,width,  regexmatch, embedcode)
 VALUES
-(127, 'MSNBC','https://www.msnbc.com',315,560, 'https?://www.msnbc.com/msnbc/watch/([A-Za-z0-9-]*)-([0-9]+)','" . '<iframe width="560" height="315" src="https://www.msnbc.com/msnbc/embedded-video/mmvo$2" scrolling="no" frameborder="0" allowfullscreen></iframe>
+(127, 'MSNBC','https://www.msnbc.com',315,560, 'https?://www.msnbc.com/msnbc/watch/([A-Za-z0-9-]*)-([0-9]+)','" . '<iframe width="560" height="315" src="https://www.msnbc.com/msnbc/embedded-video/mmvo$2" scrolling="no" frameborder="0" allowFullScreen="true"></iframe>
 
 ' . "'),
-(128, 'NBC News','https://www.nbcnews.com',315,560, 'https?://www.nbcnews.com/video/([A-Za-z0-9-]*)-([0-9]+)','" . '<iframe width="560" height="315" src="https://www.nbcnews.com/news/embedded-video/mmvo$2" scrolling="no" frameborder="0" allowfullscreen></iframe>
+(128, 'NBC News','https://www.nbcnews.com',315,560, 'https?://www.nbcnews.com/video/([A-Za-z0-9-]*)-([0-9]+)','" . '<iframe width="560" height="315" src="https://www.nbcnews.com/news/embedded-video/mmvo$2" scrolling="no" frameborder="0" allowFullScreen="true"></iframe>
+
+' . "'),
+(129, 'Twitch Clips','https://twitch.tv',378,620, 'https://clips.twitch.tv/([A-Za-z0-9]*)','" . '<iframe src="https://clips.twitch.tv/embed?clip=$1&parent=#parent#" frameborder="0" allowfullscreen="true" scrolling="no" height="378" width="620"></iframe>
 
 ' . "')
+,
+(130, 'Facebook fb.watch','https://fb.watch',378,620, 'https://fb.watch/([A-Za-z0-9]*)/','" . '
+<iframe src="https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Ffb.watch%2F$1%2F&show_text=false&width=560&t=0" width="560" height="314" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowFullScreen="true"></iframe>
+' . "'),
+(131, 'YouTube Shorts','https://youtube.com',378,620, 'https://www.youtube.com/shorts/([A-Za-z0-9_-]*)','" . '
+<iframe width="480" height="600" src="//www.youtube.com/embed/$1?rel=0&amp;playsinline=1&amp;controls=1&amp;showinfo=0&amp;modestbranding=0" frameborder="0" allowfullscreen="true"></iframe>
+' . "'),
+ (132, 'PDF Files Remote', '', 340,640, 'htt(p|ps)://([^<>]+)" . '\\' .'\\' . ".pdf','" . '
+ <embed width="480" height="600"  src="htt$1://$2.pdf" type="application/pdf"></embed>
+' . "')
+
 ");
 
+$db->query("REPLACE INTO ".TABLE_PREFIX."mediapro_sites
+	(ID,title, website, height,width,  regexmatch, embedcode)
+VALUES
+(134, 'Threads','https://threads.net',360,640, 'https://www.threads.net/t/([A-Za-z0-9_]*)','" . '<blockquote class="text-post-media" data-text-post-permalink="https://www.threads.net/t/$1" data-text-post-version="0" id="ig-tp-$1" style=" background:#FFF; border-width: 1px; border-style: solid; border-color: #00000026; border-radius: 16px; max-width:540px; margin: 1px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"> <a href="https://www.threads.net/t/$1" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%; font-family: -apple-system, BlinkMacSystemFont, sans-serif;" target="_blank"> <div style=" padding: 40px; display: flex; flex-direction: column; align-items: center;"><div style=" display:block; height:32px; width:32px; padding-bottom:20px;"> <svg aria-label="Threads" height="32px" role="img" viewBox="0 0 192 192" width="32px" xmlns="http://www.w3.org/2000/svg"> <path d="M141.537 88.9883C140.71 88.5919 139.87 88.2104 139.019 87.8451C137.537 60.5382 122.616 44.905 97.5619 44.745C97.4484 44.7443 97.3355 44.7443 97.222 44.7443C82.2364 44.7443 69.7731 51.1409 62.102 62.7807L75.881 72.2328C81.6116 63.5383 90.6052 61.6848 97.2286 61.6848C97.3051 61.6848 97.3819 61.6848 97.4576 61.6855C105.707 61.7381 111.932 64.1366 115.961 68.814C118.893 72.2193 120.854 76.925 121.825 82.8638C114.511 81.6207 106.601 81.2385 98.145 81.7233C74.3247 83.0954 59.0111 96.9879 60.0396 116.292C60.5615 126.084 65.4397 134.508 73.775 140.011C80.8224 144.663 89.899 146.938 99.3323 146.423C111.79 145.74 121.563 140.987 128.381 132.296C133.559 125.696 136.834 117.143 138.28 106.366C144.217 109.949 148.617 114.664 151.047 120.332C155.179 129.967 155.42 145.8 142.501 158.708C131.182 170.016 117.576 174.908 97.0135 175.059C74.2042 174.89 56.9538 167.575 45.7381 153.317C35.2355 139.966 29.8077 120.682 29.6052 96C29.8077 71.3178 35.2355 52.0336 45.7381 38.6827C56.9538 24.4249 74.2039 17.11 97.0132 16.9405C119.988 17.1113 137.539 24.4614 149.184 38.788C154.894 45.8136 159.199 54.6488 162.037 64.9503L178.184 60.6422C174.744 47.9622 169.331 37.0357 161.965 27.974C147.036 9.60668 125.202 0.195148 97.0695 0H96.9569C68.8816 0.19447 47.2921 9.6418 32.7883 28.0793C19.8819 44.4864 13.2244 67.3157 13.0007 95.9325L13 96L13.0007 96.0675C13.2244 124.684 19.8819 147.514 32.7883 163.921C47.2921 182.358 68.8816 191.806 96.9569 192H97.0695C122.03 191.827 139.624 185.292 154.118 170.811C173.081 151.866 172.51 128.119 166.26 113.541C161.776 103.087 153.227 94.5962 141.537 88.9883ZM98.4405 129.507C88.0005 130.095 77.1544 125.409 76.6196 115.372C76.2232 107.93 81.9158 99.626 99.0812 98.6368C101.047 98.5234 102.976 98.468 104.871 98.468C111.106 98.468 116.939 99.0737 122.242 100.233C120.264 124.935 108.662 128.946 98.4405 129.507Z" /></svg></div>  <div style=" font-size: 15px; line-height: 21px; color: #000000; font-weight: 600; "> View on Threads</div></div></a></blockquote>
+<script async src="https://www.threads.net/embed.js"></script>
 
-	// Load Language file
-	SimpleAuditoVideoEmbeder_loadlanguage();
-
-
- 	$query	= $db->simple_select("settinggroups", "COUNT(*) as counts");
-	$dorder = $db->fetch_field($query, 'counts') + 1;
-
-	$groupid = $db->insert_query('settinggroups', array(
-		'name'		=> 'simpleaudiovideoembed',
-		'title'		=> 'Simple Audio Video Embeder',
-		'description'	=> $lang->mediapro_settings2,
-		'disporder'	=> $dorder,
-		'isdefault'	=> '0'
-	));
-
-	$dorder_set = 0;
-
-	$new_setting[] = array(
-		'name'		=> 'mediapro_default_width',
-		'title'		=> $lang->mediapro_txt_default_width,
-		'description'	=> $lang->mediapro_txt_default_info,
-		'optionscode'	=> 'numeric',
-		'value'		=> '0',
-		'disporder'	=> ++$dorder_set,
-		'gid'		=> $groupid
-	);
+' . "')");
 
 
-	$new_setting[] = array(
-		'name'		=> 'mediapro_default_height',
-		'title'		=> $lang->mediapro_txt_default_height,
-		'description'	=> $lang->mediapro_txt_default_info,
-		'optionscode'	=> 'numeric',
-		'value'		=> '0',
-		'disporder'	=> ++$dorder_set,
-		'gid'		=> $groupid
-	);
-
-
-	$new_setting[] = array(
-		'name'		=> 'mediapro_max_embeds',
-		'title'		=> $lang->mediapro_max_embeds,
-		'description'	=> '',
-		'optionscode'	=> 'numeric',
-		'value'		=> '0',
-		'disporder'	=> ++$dorder_set,
-		'gid'		=> $groupid
-	);
-
-
-
-	$new_setting[] = array(
-		'name'		=> 'mediapro_disablemobile',
-		'title'		=> $lang->mediapro_disablemobile,
-		'description'	=> '',
-		'optionscode'	=> 'yesno',
-		'value'		=> '0',
-		'disporder'	=> ++$dorder_set,
-		'gid'		=> $groupid
-	);
-
-
-
-	$new_setting[] = array(
-		'name'		=> 'mediapro_showlink',
-		'title'		=> $lang->mediapro_showlink,
-		'description'	=> '',
-		'optionscode'	=> 'yesno',
-		'value'		=> '0',
-		'disporder'	=> ++$dorder_set,
-		'gid'		=> $groupid
-	);
-
-
-
-	$db->insert_query_multiple("settings", $new_setting);
-	rebuild_settings();
 
 }
-
 
 
 function SimpleAuditoVideoEmbeder_uninstall()
@@ -864,9 +882,14 @@ $db->query("DROP TABLE IF EXISTS ".TABLE_PREFIX."mediapro_sites
 
 function SimpleAuditoVideoEmbeder_process(&$message)
 {
-	global $lang, $mybb;
+	global $lang, $mybb, $parser;
 
 	static $playerCount = 0;
+
+	if (!empty($parser))
+	{
+		$parser->output_validation_policy  = 0;
+	}
 
 	if (strlen($message) < 7)
 		return $message;
@@ -1246,7 +1269,7 @@ function SimpleAuditoVideoEmbeder_activate()
 	require_once MYBB_ROOT."/inc/adminfunctions_templates.php";
     $returnStatus1 = find_replace_templatesets("footer", "#".preg_quote('<div id="debug"><debugstuff></div>') . "#i", '<div id="debug"><debugstuff></div>Media Embeding by <a href="http://www.mybbhacks.com" target="_blank">Simple Audio Video Embeder</a><br />');
 
-
+	SimpleAudioEmbeder_InstallDB();
 }
 
 function SimpleAuditoVideoEmbeder_deactivate()

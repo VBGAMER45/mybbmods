@@ -161,7 +161,7 @@ function isAllowedTo($permission = '')
 		fatal_error2($permTitle);
 }
 
-function fatal_error2($errorMsg)
+function fatal_error2($errorMsg, $logError = false)
 {
 	global $page, $lang, $context, $errors;
 	
